@@ -1,155 +1,172 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Nguyen Trong Hieu</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nguyen Trong Hieu · IT Business Analyst</title>
+<meta name="description" content="Nguyen Trong Hieu — IT Business Analyst in Ho Chi Minh City. Requirements, BPMN, data mapping, SQL.">
+<meta name="theme-color" content="#0D1014">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: the portfolio reads like a requirements document — numbered §sections, a BPMN-style career flow, and a skills × projects traceability matrix. */
+/* Dark, quiet, editorial. One typeface (Inter) everywhere so every line sits on the same baseline; warm gold as the single accent. */
 :root{
-  --paper:#F2F5F4; --surface:#FFFFFF; --ink:#14262A; --muted:#566B6E; --line:#CCD8D6;
-  --teal:#2F6E6A; --teal-soft:#DCEAE7; --amber:#C27B17; --amber-soft:#F6E7CF;
-  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --bg:#0D1014; --bg2:#11151B; --surface:#161B22; --surface2:#1B212A;
+  --line:#262D37; --line2:#323a46;
+  --ink:#ECE8E1; --ink2:#C9C5BD; --muted:#8E949C;
+  --gold:#C9A86A; --gold2:#E2C68F; --gold-soft:rgba(201,168,106,.12);
+  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --r:14px;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --paper:#0F1A1C; --surface:#152427; --ink:#E3ECEA; --muted:#9AB0AE; --line:#2A3E41;
-  --teal:#74BDB5; --teal-soft:#1D3A3A; --amber:#E9AA4E; --amber-soft:#3A2D18; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --paper:#0F1A1C; --surface:#152427; --ink:#E3ECEA; --muted:#9AB0AE; --line:#2A3E41;
-  --teal:#74BDB5; --teal-soft:#1D3A3A; --amber:#E9AA4E; --amber-soft:#3A2D18; color-scheme:dark}
-
 *{box-sizing:border-box}
-body{background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--body);
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.wrap{max-width:1040px;margin:0 auto;padding-block:40px 64px;display:flex;flex-direction:column;gap:72px}
-h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink2);font:400 16px/1.65 var(--font);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-feature-settings:"cv11","ss01";
+  background-image:radial-gradient(1200px 600px at 85% -10%,rgba(201,168,106,.08),transparent 60%),radial-gradient(900px 500px at -10% 10%,rgba(120,140,170,.06),transparent 60%);
+  background-attachment:fixed;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+img{max-width:100%;display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:72px 0 80px;display:flex;flex-direction:column;gap:96px}
+h1,h2,h3{font-family:var(--font);color:var(--ink);margin:0;line-height:1.2;letter-spacing:-.015em;font-weight:600}
 p{margin:0}
-a{color:var(--teal)}
-:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
-.label{font:500 12px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+a{color:var(--gold2)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+.label{display:block;font:600 11.5px/1.4 var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
 /* ---------- Hero ---------- */
-.hero{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:40px;align-items:end}
-.hero-text{display:flex;flex-direction:column;gap:20px;min-width:0}
-.hero h1{font-size:clamp(44px,8vw,88px);font-weight:800;letter-spacing:-.02em}
-.hero h1 span{color:var(--teal)}
-.role{font:500 18px/1.4 var(--mono);color:var(--amber);letter-spacing:.04em}
-.lede{font-size:19px;max-width:38em;color:var(--ink)}
-.photo{position:relative;max-width:100%}
-.photo img{display:block;width:100%;aspect-ratio:290/362;object-fit:cover;border-radius:4px;filter:saturate(.9)}
-.photo::after{content:"";position:absolute;inset:10px -10px -10px 10px;border:1.5px solid var(--teal);border-radius:4px;z-index:-1}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:64px;align-items:center}
+.hero-text{display:flex;flex-direction:column;gap:22px;min-width:0}
+.role{display:inline-flex;align-items:center;gap:10px;font:600 13px/1 var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.role::before{content:"";width:28px;height:1px;background:var(--gold)}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:700;line-height:1.05;letter-spacing:-.03em}
+.hero h1 span{color:var(--gold)}
+.lede{font-size:18px;line-height:1.7;max-width:36em;color:var(--ink2)}
+.photo{position:relative;margin:0;justify-self:end;width:100%}
+.photo img{width:100%;aspect-ratio:290/362;object-fit:cover;border-radius:var(--r);filter:grayscale(.15) contrast(1.03);box-shadow:0 30px 60px -20px rgba(0,0,0,.7)}
+.photo::after{content:"";position:absolute;inset:-12px 12px 12px -12px;border:1px solid rgba(201,168,106,.45);border-radius:calc(var(--r) + 4px);z-index:-1}
 
-.control{border:1px solid var(--line);background:var(--surface);border-radius:4px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
-.control div{padding:14px 18px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;min-width:0}
+.control{border:1px solid var(--line);background:linear-gradient(180deg,var(--surface),var(--bg2));border-radius:var(--r);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:hidden}
+.control div{padding:22px 24px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:8px;min-width:0}
 .control div:last-child{border-right:0}
-.control b{font:600 15px/1.35 var(--body)}
+.control b{font:500 15px/1.45 var(--font);color:var(--ink)}
 
 /* ---------- Sections ---------- */
-section{display:flex;flex-direction:column;gap:28px}
-.sec-head{display:flex;align-items:baseline;gap:16px;border-bottom:1.5px solid var(--ink);padding-bottom:12px}
-.sec-head .num{font:500 14px var(--mono);color:var(--teal)}
-.sec-head h2{font-size:clamp(28px,4vw,38px);font-weight:700}
+section{display:flex;flex-direction:column;gap:36px}
+.sec-head{display:flex;align-items:center;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.sec-head .num{font:600 12px/1 var(--font);letter-spacing:.1em;color:var(--gold);border:1px solid rgba(201,168,106,.4);border-radius:999px;padding:7px 11px}
+.sec-head h2{font-size:clamp(26px,3.4vw,34px);font-weight:600}
 
-/* Summary stats */
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.stat{display:flex;flex-direction:column;gap:6px;padding-top:14px;border-top:1px solid var(--line)}
-.stat strong{font:800 40px/1 var(--display);color:var(--teal);font-variant-numeric:tabular-nums}
-.stat span{font-size:14px;color:var(--muted)}
-.summary{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px}
-.summary p{font-size:17px}
+/* Summary */
+.summary{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:56px;align-items:start}
+.summary>p{font-size:17px;line-height:1.8}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.stat{display:flex;flex-direction:column;gap:8px;padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.stat strong{font:600 34px/1 var(--font);color:var(--gold2);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{font-size:13.5px;line-height:1.5;color:var(--muted)}
 
-/* ---------- Career flow (BPMN) ---------- */
-.flow{position:relative;display:flex;flex-direction:column;gap:22px;padding-left:44px}
-.flow::before{content:"";position:absolute;left:15px;top:18px;bottom:18px;width:2px;background:var(--line)}
-.evt{position:relative;display:flex;align-items:center;gap:14px;min-height:32px}
-.evt i{position:absolute;left:-44px;width:32px;height:32px;border-radius:50%;background:var(--paper);border:2px solid var(--teal)}
-.evt.now i{border:5px double var(--amber)}
-.evt.start i{border-width:1.5px}
-.task{position:relative;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;min-width:0}
-.task::before{content:"";position:absolute;left:-33px;top:26px;width:10px;height:10px;background:var(--teal);transform:rotate(45deg)}
-.task.current{border-color:var(--teal)}
-.task-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline}
-.task h3{font-size:22px;font-weight:700}
-.task h3 small{display:block;font:500 15px/1.4 var(--body);color:var(--muted);margin-top:4px}
-.date{font:500 13px var(--mono);color:var(--teal);white-space:nowrap;font-variant-numeric:tabular-nums}
-.task ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
-.task li::marker{color:var(--amber)}
-.tags{display:flex;flex-wrap:wrap;gap:6px}
-.tag{font:500 12px var(--mono);padding:3px 8px;border-radius:3px;background:var(--teal-soft);color:var(--teal)}
+/* ---------- Career timeline ---------- */
+.flow{position:relative;display:flex;flex-direction:column;gap:18px;padding-left:40px}
+.flow::before{content:"";position:absolute;left:11px;top:12px;bottom:12px;width:1px;background:linear-gradient(var(--gold),var(--line) 30%,var(--line))}
+.evt{position:relative;display:flex;align-items:center;min-height:24px}
+.evt i{position:absolute;left:-40px;top:50%;transform:translateY(-50%);width:23px;height:23px;border-radius:50%;background:var(--bg);border:1px solid var(--line2)}
+.evt.now i{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-soft)}
+.evt.now i::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--gold)}
+.task{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:26px 28px;display:flex;flex-direction:column;gap:14px;min-width:0;transition:border-color .2s}
+.task:hover{border-color:var(--line2)}
+.task::before{content:"";position:absolute;left:-33px;top:33px;width:9px;height:9px;border-radius:50%;background:var(--line2)}
+.task.current{border-color:rgba(201,168,106,.35);background:linear-gradient(180deg,rgba(201,168,106,.05),var(--surface) 40%)}
+.task.current::before{background:var(--gold)}
+.task-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:6px 20px}
+.task h3{font-size:20px;font-weight:600;line-height:1.3}
+.task h3 small{display:block;font:400 15px/1.5 var(--font);color:var(--muted);margin-top:4px;letter-spacing:0}
+.date{font:500 13px/1.5 var(--font);color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums;padding-top:3px}
+.task ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--ink2);font-size:15.5px}
+.task li{padding-left:4px}
+.task li::marker{color:var(--gold)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;padding-top:2px}
+.tag{font:500 12px/1 var(--font);padding:7px 11px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);color:var(--ink2)}
 
 /* ---------- Projects ---------- */
-.projects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-.proj{border-top:3px solid var(--teal);background:var(--surface);padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0}
-.proj .domain{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--amber)}
-.proj h3{font-size:21px;font-weight:700}
-.proj p{color:var(--muted);font-size:15px}
-.proj .date{margin-top:auto}
+.projects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.proj{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;display:flex;flex-direction:column;gap:12px;min-width:0;overflow:hidden}
+.proj::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent 70%)}
+.proj .domain{font:600 11.5px/1.4 var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.proj h3{font-size:20px;font-weight:600}
+.proj p{color:var(--muted);font-size:15px;line-height:1.7}
+.proj .date{margin-top:auto;padding-top:10px;color:var(--ink2)}
 
 /* ---------- Traceability matrix ---------- */
-.matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
-table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
-th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:center}
+.matrix-note{font-size:14px;color:var(--muted);margin-top:-20px}
+.matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14.5px}
+th,td{padding:14px 18px;border-bottom:1px solid var(--line);text-align:center;vertical-align:middle}
 th:first-child,td:first-child{text-align:left}
-thead th{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);vertical-align:bottom}
+thead th{font:600 11px/1.4 var(--font);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:var(--bg2)}
 tbody tr:last-child td{border-bottom:0}
-tbody td:first-child{font-weight:500}
-.dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--teal)}
-.matrix-note{font-size:13px;color:var(--muted)}
+tbody tr:hover td{background:rgba(255,255,255,.015)}
+tbody td:first-child{font-weight:500;color:var(--ink)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px var(--gold-soft);vertical-align:middle}
 
-.toolset{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
-.toolset div{display:flex;flex-direction:column;gap:10px;min-width:0}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font-size:14px;padding:4px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+.toolset{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;padding-top:8px}
+.toolset>div{display:flex;flex-direction:column;gap:14px;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 13px/1 var(--font);padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink2)}
 
 /* ---------- Education + contact ---------- */
-.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:22px;display:flex;flex-direction:column;gap:6px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;display:flex;flex-direction:column;gap:8px}
 .card h3{font-size:20px}
 .card p{color:var(--muted)}
 
-.contact{background:var(--ink);color:var(--paper);border-radius:6px;padding:40px clamp(20px,5vw,48px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center}
-.contact h2{font-size:clamp(30px,5vw,48px);font-weight:800}
-.contact p{opacity:.8;margin-top:10px;max-width:32em}
-.lines{display:flex;flex-direction:column;gap:10px}
-.line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.line code{font:500 15px var(--mono);user-select:all;word-break:break-all}
-.copy{font:500 12px var(--mono);letter-spacing:.05em;text-transform:uppercase;background:transparent;color:inherit;border:1px solid currentColor;border-radius:3px;padding:4px 10px;cursor:pointer;opacity:.85}
-.copy:hover{opacity:1;color:var(--amber)}
-footer{font:400 12px var(--mono);color:var(--muted);text-align:center}
+.contact{position:relative;overflow:hidden;background:linear-gradient(135deg,#1A1710,#13161C 55%);border:1px solid rgba(201,168,106,.3);border-radius:20px;padding:52px clamp(24px,5vw,56px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:36px;align-items:center}
+.contact::after{content:"";position:absolute;right:-120px;top:-120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(rgba(201,168,106,.18),transparent 70%);pointer-events:none}
+.contact h2{font-size:clamp(30px,4.4vw,44px);font-weight:700;letter-spacing:-.025em}
+.contact p{color:var(--ink2);margin-top:12px;max-width:32em}
+.lines{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+.line{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:12px 14px 12px 18px;border:1px solid var(--line2);border-radius:12px;background:rgba(13,16,20,.6)}
+.line code{font:500 15px/1.4 var(--font);color:var(--ink);user-select:all;word-break:break-all;font-variant-numeric:tabular-nums}
+.copy{font:600 11.5px/1 var(--font);letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#17130B;border:0;border-radius:999px;padding:9px 14px;cursor:pointer}
+.copy:hover{background:var(--gold2)}
+footer{font:400 13px/1.5 var(--font);color:var(--muted);text-align:center;padding-top:8px}
 
-@media (max-width:820px){
-  .hero{grid-template-columns:1fr}
-  .photo{max-width:220px;order:-1}
-  .control,.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:860px){
+  .wrap{padding-top:48px;gap:72px}
+  .hero{grid-template-columns:1fr;gap:36px}
+  .photo{max-width:220px;justify-self:start;order:-1;margin-left:12px}
+  .control{grid-template-columns:repeat(2,minmax(0,1fr))}
   .control div:nth-child(2){border-right:0}
   .control div:nth-child(-n+2){border-bottom:1px solid var(--line)}
   .summary,.projects,.two,.contact{grid-template-columns:1fr}
+  .summary{gap:32px}
   .toolset{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-@media (max-width:480px){
+@media (max-width:520px){
+  .role{font-size:11.5px;letter-spacing:.1em;line-height:1.4}
+  .role::before{width:18px}
+  .control{grid-template-columns:1fr}
+  .control div{border-right:0;border-bottom:1px solid var(--line)}
+  .control div:last-child{border-bottom:0}
   .toolset{grid-template-columns:1fr}
-  .flow{padding-left:36px}
-  .evt i{left:-36px;width:24px;height:24px}
-  .flow::before{left:11px}
-  .task::before{left:-29px}
-  .task{padding:18px}
-}
-@media (prefers-reduced-motion:no-preference){
-  .hero-text>*{animation:rise .6s ease both}
-  .hero-text>*:nth-child(2){animation-delay:.08s}
-  .hero-text>*:nth-child(3){animation-delay:.16s}
-  @keyframes rise{from{transform:translateY(10px)}to{transform:none}}
+  .flow{padding-left:30px}
+  .flow::before{left:8px}
+  .evt i{left:-30px;width:17px;height:17px}
+  .evt.now i::after{inset:4px}
+  .task::before{left:-26px}
+  .task,.proj,.card{padding:22px}
+  .date{white-space:normal}
 }
 </style>
+</head>
+<body>
 
 <div class="wrap">
 
   <header class="hero">
     <div class="hero-text">
       <span class="role">IT Business Analyst · Ho Chi Minh City</span>
-      <h1>Nguyen<br>Trong <span>Hieu</span></h1>
+      <h1>Nguyen Trong <span>Hieu</span></h1>
       <p class="lede">I turn business needs into requirements that development teams can build from: BRDs, FRDs, user stories, BPMN workflows and data mappings, backed by hands-on SQL and API testing.</p>
     </div>
     <figure class="photo" style="margin:0">
