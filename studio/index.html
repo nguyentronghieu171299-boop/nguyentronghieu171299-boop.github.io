@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio Daily BA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a quiet editing room; tools first, no decoration.
+   IDEA: an editing bay - monitor on top, strips of film below, a slate of settings beside.
+   PICTURE: the 9:16 monitor itself, with the live template on it.
+   COLOUR and TYPE: studio charcoal in both themes, the DAY-badge yellow as the one accent; Roboto, the channel's own font.
+   LAYOUT: monitor + inspector side by side, timeline full width below; stacked on phones. */
+:root{color-scheme:dark;--bg:#121418;--panel:#1b1e24;--panel2:#23272f;--line:#30353f;--ink:#eceef2;--mute:#9aa1ad;--acc:#FFFF00;--accT:#FFFF00;--warm:#FFD23F;--clip:#3d5a80;--txt:#FFD23F;--mus:#2a9d8f;--field:#0f1115;--mon:#0b0c0f;--hover:#4a5160;--onInk:#111;--rng:#FFFF00;--ph:#FFFF00}
+:root[data-ui=light]{color-scheme:light;--bg:#f3f3ef;--panel:#ffffff;--panel2:#eef0f3;--line:#d8dbe1;--ink:#16181d;--mute:#59606c;--accT:#7a6000;--clip:#6f8fc0;--mus:#3fb3a5;--field:#ffffff;--mon:#e4e6ea;--hover:#aeb4be;--onInk:#ffffff;--rng:#16181d;--ph:#e03a3a}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Roboto,Arial,sans-serif;overflow-x:clip}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:var(--panel2);border:1px solid var(--line);border-radius:10px;min-height:40px;padding:0 14px;cursor:pointer;white-space:nowrap}
+button:hover{border-color:var(--hover)}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--rng);outline-offset:1px}
+button.pri{background:var(--acc);color:#111;border-color:var(--acc);font-weight:700}
+button.on{background:var(--ink);color:var(--onInk);border-color:var(--ink);font-weight:700}
+button:disabled{opacity:.4;cursor:default}
+input,select,textarea{background:var(--field);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:16px;width:100%}
+input[type=range]{padding:0;accent-color:var(--rng)}input[type=checkbox]{width:20px;height:20px;accent-color:var(--rng)}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px max(2vw,12px);border-bottom:1px solid var(--line);background:var(--panel)}
+header .brand{font-weight:900;font-size:18px;margin-right:4px}
+header .grow{flex:1}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}.seg button{border:0;border-radius:0}
+.day{display:flex;align-items:center;gap:6px}.day input{width:72px}
+#pname{max-width:190px}
+main{display:grid;grid-template-columns:minmax(0,1fr) 340px;grid-template-areas:'mon panel' 'tl tl';gap:12px;padding:12px max(2vw,12px)}.mon{grid-area:mon}aside{grid-area:panel}.tl{grid-area:tl}
+.mon{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--mon);border-radius:14px;padding:12px}
+#cv{height:min(60vh,700px);aspect-ratio:9/16;max-width:100%;background:#000;border-radius:6px;touch-action:none;display:block}
+.scrub{display:flex;align-items:center;gap:10px;width:100%;max-width:520px}
+#play{width:48px;height:48px;min-height:48px;padding:0;border-radius:50%;display:grid;place-items:center;flex:none}
+#play svg{width:22px;height:22px;fill:#111}
+.tm{font-variant-numeric:tabular-nums;font-size:13px;color:var(--mute);flex:none;min-width:44px}.tm.cur{color:var(--ink);font-weight:700}
+#scr{flex:1}
+.len{font-size:13px;color:var(--mute);width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.len #tclips{margin-left:auto}
+.chip{min-height:30px;padding:0 10px;border-radius:15px;font-size:12px;background:var(--panel2)}
+.tplc{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;white-space:normal;padding:10px 12px;min-height:56px}.tplc small{color:var(--mute);font-size:12px}.tplc.on small{color:inherit;opacity:.8}.len b{color:var(--ink);font-weight:700}
+.tools{display:flex;gap:4px;overflow-x:auto;width:100%;padding:6px 2px 2px;scrollbar-width:thin}
+.tool{flex:none;width:72px;min-height:64px;padding:6px 2px;border:0;background:transparent;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--ink)}
+.tool:hover{background:var(--panel2)}
+#themeBtn{width:40px;padding:0;display:grid;place-items:center}#themeBtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.tool svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.it.v{background:#b8326a}.it.e{background:#e0742e}.it.x{background:#7b61c9}
+.stk{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.stk button{font-size:28px;min-height:52px;padding:0}
+#recDot{display:none}.recording #recDot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e03a3a;margin-right:6px}
+.tool.rec{color:#e03a3a}
+#outi{width:100%;max-height:50vh;object-fit:contain;background:#000;border-radius:8px}
+.tool.on{background:transparent;color:var(--accT);font-weight:500}.tool:disabled{opacity:.35}
+aside{background:var(--panel);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px;max-height:calc(64vh + 200px);overflow:auto}
+aside h3{margin:0;font-size:16px}
+aside .row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+aside label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+aside .chk{flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-size:15px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}.btns button{flex:1}.btns.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.g3 button{padding:0 6px;overflow:hidden;text-overflow:ellipsis}
+.sw{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sw button{width:36px;min-height:36px;padding:0;border-radius:50%}.sw button.cur{outline:3px solid var(--rng);outline-offset:2px}.sw input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;cursor:pointer}
+.cg{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mute)}
+.note{font-size:13px;color:var(--mute);margin:0}
+/* inspector home */
+.ph-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}.ph-head .note{font-variant-numeric:tabular-nums}
+.drop{display:flex;align-items:center;gap:14px;width:100%;min-height:84px;padding:14px 16px;border:1.5px dashed var(--line);border-radius:14px;background:var(--panel2);text-align:left;white-space:normal;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--rng);border-style:solid}.drop.over{background:var(--panel)}
+.drop .ic{flex:none;width:48px;height:48px;border-radius:12px;background:var(--acc);display:grid;place-items:center}
+.drop .ic svg{width:26px;height:26px;fill:none;stroke:#111;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.drop .dt{display:flex;flex-direction:column;gap:2px}.drop b{font-size:16px}.drop small{font-size:13px;color:var(--mute)}.drop .mute2{opacity:.75;font-size:12px}
+.qa{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.qa button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:74px;padding:6px 4px;border-radius:12px;background:var(--panel2);border:1px solid transparent;font-size:13px;white-space:normal;line-height:1.2}
+.qa button:hover{border-color:var(--line);background:var(--panel)}.qa svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.card-h{display:flex;align-items:center;gap:8px}.card-h svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.badge{margin-left:auto;font-size:12px;color:var(--mute);background:var(--panel2);padding:3px 9px;border-radius:10px;font-variant-numeric:tabular-nums}
+.card textarea{min-height:120px;resize:vertical;line-height:1.5}
+.split{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+button.dark{background:var(--ink);color:var(--onInk);border-color:var(--ink);font-weight:600}button.dark:hover{opacity:.9}
+.ph{margin:0 0 8px;font-size:13px;font-weight:600;color:var(--mute)}
+.keys{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;font-size:13px;color:var(--mute)}
+kbd{font:600 12px Roboto,Arial,sans-serif;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:2px 7px;white-space:nowrap}
+.touch-tip{display:none}@media(pointer:coarse){.keys-wrap{display:none}.touch-tip{display:block}}
+hr{border:0;border-top:1px solid var(--line);margin:2px 0;width:100%}
+.tl{background:var(--panel);border-radius:14px;padding:10px}
+.tlbar{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px;color:var(--mute)}.tlbar input{max-width:180px}
+.tlwrap{display:grid;grid-template-columns:64px minmax(0,1fr)}
+.lbls div{height:44px;display:flex;align-items:center;font-size:13px;color:var(--mute)}.lbls .rl{height:26px}
+#tls{overflow-x:auto;position:relative;cursor:grab;scrollbar-width:thin;overscroll-behavior-x:contain}#tls.grabbing{cursor:grabbing}
+.tlview{position:relative}
+#tlin{position:relative}
+.ruler{height:26px;position:relative;border-bottom:1px solid var(--line);touch-action:pan-x}
+.ruler span{position:absolute;top:4px;font-size:11px;color:var(--mute);transform:translateX(-50%)}.ruler span:first-of-type{transform:none}
+.ruler i{position:absolute;bottom:0;width:1px;height:6px;background:var(--line)}
+.trk{position:relative;border-bottom:1px solid var(--line);touch-action:pan-x}
+.it{position:absolute;height:36px;border-radius:7px;padding:0 10px;display:flex;align-items:center;font-size:12px;overflow:hidden;white-space:nowrap;cursor:pointer;touch-action:pan-x;user-select:none;-webkit-user-select:none;border:2px solid transparent}
+.it.c{background:var(--clip)}.it.t{background:var(--txt);color:#111;font-weight:500}.it.m{background:var(--mus)}
+.it.sel{border-color:var(--ink);box-shadow:0 0 0 2px #000 inset}
+.it .h{position:absolute;top:0;bottom:0;width:14px;cursor:ew-resize;touch-action:none}.it.sel.t,.it.sel.m,.it.sel.e{touch-action:none;cursor:grab}.it .h.l{left:0}.it .h.r{right:0}
+.it .h::after{content:"";position:absolute;top:9px;bottom:9px;left:5px;width:2px;background:rgba(255,255,255,.7);border-radius:2px}
+.it.t .h::after{background:rgba(0,0,0,.5)}
+#ph{position:absolute;top:0;bottom:0;width:2px;background:var(--ph);pointer-events:none;left:50%;margin-left:-1px;z-index:2}#ph::before{content:'';position:absolute;top:0;left:-5px;border:6px solid transparent;border-top:8px solid var(--ph)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+.modal.open{display:flex}
+.box{background:var(--panel);border-radius:14px;padding:18px;width:min(520px,100%);max-height:90vh;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.box h3{margin:0}.plist{display:flex;flex-direction:column;gap:8px}
+.pr{display:flex;gap:8px;align-items:center;background:var(--panel2);border-radius:10px;padding:8px 10px}.pr b{flex:1;font-weight:500}.pr small{color:var(--mute)}
+.bar{height:8px;background:var(--panel2);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--rng);width:0}
+#outv{width:100%;max-height:50vh;background:#000;border-radius:8px}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#000;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10;max-width:90vw}
+#toast.show{opacity:1}
+#media{position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none;overflow:hidden}
+@media(min-width:901px){.tools{flex-wrap:wrap;justify-content:center;overflow:visible}.tool{width:66px}}
+@media(max-width:900px){main{grid-template-columns:minmax(0,1fr);grid-template-areas:'mon' 'tl' 'panel'}aside{max-height:none}#cv{height:min(58vh,640px)}}
+@media(max-width:600px){.tlhint{display:none}}
+@media(max-width:600px){header .brand{width:100%}#pname{max-width:none;flex:1 1 100%}}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+<script>
+(function(){var m=null;try{m=localStorage.getItem('sdba-theme')}catch(e){}
+if(m!=='light'&&m!=='dark'){var v=document.documentElement.getAttribute('data-theme');m=v==='light'||v==='dark'?v:(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}
+document.documentElement.setAttribute('data-ui',m)})();
+</script>
+</head>
+<body>
+<header>
+  <span class="brand">Studio</span>
+  <input id="pname" aria-label="Tên dự án" value="Video mới">
+  <span class="grow"></span>
+  <button id="themeBtn" aria-label="Đổi giao diện sáng/tối" title="Giao diện sáng/tối"></button>
+  <button id="projBtn">Dự án</button>
+  <button id="exp" class="pri">Xuất video</button>
+</header>
+<main>
+  <section class="mon">
+    <canvas id="cv" width="1080" height="1920" aria-label="Màn hình xem trước"></canvas>
+    <div class="scrub"><button id="play" class="pri" aria-label="Phát"></button><span class="tm cur" id="tcur">0:00.0</span><input type="range" id="scr" min="0" max="1" step="0.01" value="0" aria-label="Tua video"><span class="tm" id="ttot">0:00.0</span></div>
+    <div class="len"><span>Độ dài video: <b id="tlen">0,0 giây</b></span><span id="tclips">0 clip</span><button id="tplChip" class="chip" title="Mẫu template"></button></div>
+    <div class="tools" role="toolbar" aria-label="Công cụ"><button class="tool" id="tAdd" title="Thêm clip"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="M16 10l5-3v10l-5-3"/><path d="M9.5 9.5v5M7 12h5"/></svg><span>Thêm clip</span></button><button class="tool" id="split" title="Tách"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></svg><span>Tách</span></button><button class="tool" id="tSpeed" title="Tốc độ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/></svg><span>Tốc độ</span></button><button class="tool" id="tVol" title="Âm lượng"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg><span>Âm lượng</span></button><button class="tool" id="tFx" title="Bộ lọc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="5"/><circle cx="15" cy="9" r="5"/><circle cx="12" cy="15" r="5"/></svg><span>Bộ lọc</span></button><button class="tool" id="tTr" title="Chuyển cảnh"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="8" height="12" rx="1.5"/><rect x="13" y="6" width="8" height="12" rx="1.5"/><path d="M9 12h6M13 10l2 2-2 2"/></svg><span>Chuyển cảnh</span></button><button class="tool" id="tEff" title="Hiệu ứng"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><span>Hiệu ứng</span></button><button class="tool" id="tTpl" title="Mẫu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg><span>Mẫu</span></button><button class="tool" id="tText" title="Chữ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg><span>Chữ</span></button><button class="tool" id="tCap" title="Phụ đề"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15h4M13 15h4M7 11h10"/></svg><span>Phụ đề</span></button><button class="tool" id="tStk" title="Sticker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-8-8"/><path d="M20 12h-5a3 3 0 0 1-3-3V4"/><path d="M9 14.5s1 1.5 3 1.5 3-1.5 3-1.5M9 10h.01"/></svg><span>Sticker</span></button><button class="tool" id="tMus" title="Nhạc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span>Nhạc</span></button><button class="tool" id="tSfx" title="Âm thanh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h2l2-6 3 12 3-9 2 6 2-3h4"/></svg><span>Âm thanh</span></button><button class="tool" id="tRec" title="Thu giọng"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span>Thu giọng</span></button><button class="tool" id="tFit" title="Khung"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg><span>Khung</span></button><button class="tool" id="tCover" title="Ảnh bìa"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><span>Ảnh bìa</span></button><button class="tool" id="tDup" title="Nhân bản"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Nhân bản</span></button><button class="tool" id="tDel" title="Xóa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg><span>Xóa</span></button><button class="tool" id="undo" title="Hoàn tác"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg><span>Hoàn tác</span></button><button class="tool on" id="safe" title="Vùng an toàn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 16h14M15 6v10"/></svg><span>Vùng an toàn</span></button></div>
+  </section>
+  <aside id="panel"></aside>
+<section class="tl">
+  <div class="tlbar">Timeline <span class="note tlhint">· Vuốt hoặc kéo để tua, chạm để chọn</span><span style="flex:1"></span> Thu phóng <input id="zoom" type="range" min="8" max="240" value="40" aria-label="Thu phóng timeline"></div>
+  <div class="tlwrap">
+    <div class="lbls"><div class="rl"></div><div id="lc">Clip</div><div id="lt">Chữ</div><div id="lm">Âm thanh</div><div id="le">Hiệu ứng</div></div>
+    <div class="tlview"><div id="tls"><div id="tlin"><div class="ruler" id="ruler"></div><div class="trk" id="tc"></div><div class="trk" id="tt"></div><div class="trk" id="tm"></div><div class="trk" id="te"></div></div></div><div id="ph"></div></div>
+  </div>
+</section>
+</main>
+<div class="modal" id="projM"><div class="box"><h3>Dự án đã lưu</h3><p class="note">Nháp và video được lưu trong trình duyệt này, trên thiết bị này. Máy khác hay trình duyệt khác sẽ không thấy.</p><div class="plist" id="plist"></div><div class="btns"><button id="newP">+ Dự án mới</button><button id="closeP">Đóng</button></div></div></div>
+<div class="modal" id="expM"><div class="box"><h3 id="expH">Đang xuất video…</h3><p class="note" id="expN">Video được ghi theo thời gian thực. Giữ nguyên tab này đến khi xong.</p><div class="bar"><i id="expBar"></i></div><video id="outv" controls playsinline hidden></video><img id="outi" alt="Ảnh bìa" hidden><div class="btns"><button id="dlBtn" class="pri" hidden>Tải video về máy</button><button id="expClose">Hủy</button></div></div></div>
+<input type="file" id="fClip" accept="video/*,image/*" multiple hidden>
+<input type="file" id="fMus" accept="audio/*" hidden>
+<input type="file" id="fSrt" accept=".srt,.vtt,text/plain" hidden>
+<div id="media"></div>
+<div id="toast" role="status"></div>
+<script>
+{
+window.addEventListener('error',e=>{try{const el=document.getElementById('toast');el.textContent='Có lỗi: '+(e.message||'không rõ')+'. Thử tải lại trang.';el.classList.add('show')}catch(_){}});
+const $=s=>document.querySelector(s);
+const cv=$('#cv'),g=cv.getContext('2d'),W=1080,H=1920;
+const uid=()=>Math.random().toString(36).slice(2,10);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=t=>{t=Math.max(0,t||0);const m=Math.floor(t/60),s=t-m*60;return m+':'+(s<10?'0':'')+s.toFixed(1)};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toast=m=>{const e=$('#toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2600)};
+
+/* ---------- template presets ---------- */
+const PRE={
+  tagD:{w:900,size:80,color:'#111111',bg:'#FFFF00',style:'box',y:.05},
+  tagW:{w:700,size:52,color:'#ffffff',style:'shadow',y:.05},
+  titleD:{w:900,size:96,color:'#ffffff',style:'outline',y:.16},
+  titleW:{w:900,size:96,color:'#FFD23F',style:'outline',y:.16},
+  cap:{w:700,size:60,color:'#111111',bg:'#ffffff',style:'box',y:.6},
+  sub:{w:700,size:64,color:'#ffffff',style:'outline',y:.6},
+  free:{w:700,size:64,color:'#ffffff',style:'outline',y:.4},
+  sticker:{w:400,size:200,color:'#ffffff',style:'emoji',y:.32}
+};
+const presetFor=(role,mode)=>role==='tag'?(mode==='daily'?PRE.tagD:PRE.tagW):role==='title'?(mode==='weekend'?PRE.titleW:PRE.titleD):role==='cap'?(mode==='daily'?PRE.cap:PRE.sub):role==='sticker'?PRE.sticker:PRE.free;
+const tagText=()=>S.mode==='daily'?'DAY '+S.day:'CUỐI TUẦN';
+function mkText(role,text,s,e){const p=presetFor(role,S.mode);const x=Object.assign({id:uid(),role,text,s,e,x:.5,anim:role==='title'||role==='sticker'?'pop':'none',aout:false,sc:'#000000'},JSON.parse(JSON.stringify(p)));if(S)rcApply(x);return x}
+function rcApply(x){const r=(S.rc||{})[x.role];if(r)Object.keys(r).forEach(k=>{if(r[k]!=null)x[k]=r[k]})}
+function applyPreset(x){const p=presetFor(x.role,S.mode);Object.assign(x,{w:p.w,size:p.size,color:p.color,bg:p.bg,style:p.style,sc:'#000000'});rcApply(x)}
+
+/* ---------- state ---------- */
+let stall=0,clean=false,recV=null,pmode='',S,pid,M={},sel=null,t=0,playing=false,exporting=false,lastNow=0,hist=[],snapped=false,safe=true,hits=[];
+function fresh(){
+  S={name:'Video mới',mode:'none',day:1,clips:[],texts:[],music:[],fx:[]};
+  pid=uid();sel=null;t=0;hist=[];
+}
+const snap=()=>{if(snapped)return;snapped=true;hist.push(JSON.stringify(S));if(hist.length>60)hist.shift()};
+const done=()=>{snapped=false;save();refresh()};
+function undo(){snapped=false;if(!hist.length){toast('Không còn gì để hoàn tác');return}S=JSON.parse(hist.pop());S.texts.forEach(x=>{if(x.e===undefined)x.e=null});if(sel&&!findSel())sel=null;syncTop();renderPanel();refresh();save()}
+
+/* ---------- timeline math ---------- */
+const sp=c=>c.speed||1;const clen=c=>Math.max(.1,(c.b-c.a)/sp(c));
+function starts(){let acc=0;return S.clips.map(c=>{const s=acc;acc+=clen(c);return s})}
+const clipTotal=()=>S.clips.reduce((a,c)=>a+clen(c),0);
+function D(){let d=clipTotal();S.texts.forEach(x=>{if(x.e!=null)d=Math.max(d,x.e)});S.music.forEach(m=>d=Math.max(d,m.e));(S.fx||[]).forEach(f=>d=Math.max(d,f.e));return Math.max(d,1)}
+function clipAt(tt){const st=starts();for(let i=0;i<S.clips.length;i++){if(tt>=st[i]&&tt<st[i]+clen(S.clips[i]))return{c:S.clips[i],cs:st[i],i}}return null}
+const tEnd=x=>x.e==null?Infinity:x.e;
+
+/* ---------- media ---------- */
+let AC=null,master,recDest,bus,an,anBuf,duck=1;
+function createMedia(rec){return new Promise(res=>{
+  const kind=rec.type.startsWith('video')?'video':rec.type.startsWith('audio')?'audio':'image';
+  const url=URL.createObjectURL(rec.blob);const m={id:rec.id,name:rec.name,kind,url,dur:rec.dur||3,ok:false,route:rec.route||''};
+  if(kind==='image'){const im=new Image();im.onload=()=>{m.ok=true;res(m)};im.onerror=()=>res(m);im.src=url;m.el=im}
+  else{const el=document.createElement(kind);el.preload='auto';el.playsInline=true;el.setAttribute('playsinline','');el.src=url;
+    let fin=false;const ok=()=>{if(fin)return;fin=true;m.dur=isFinite(el.duration)&&el.duration>0?el.duration:(rec.dur||3);m.ok=true;res(m)};el.onloadedmetadata=ok;setTimeout(()=>{if(!fin){fin=true;m.ok=el.readyState>=1;if(m.ok)m.dur=isFinite(el.duration)&&el.duration>0?el.duration:(rec.dur||3);res(m)}},6000);el.onerror=()=>{toast('Trình duyệt không đọc được file '+rec.name);res(m)};
+    el.onseeked=()=>{};$('#media').appendChild(el);m.el=el;if(kind==='video')el.load()}
+  M[rec.id]=m;if(AC)attach(m);
+})}
+function ensureAudio(){
+  if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.connect(AC.destination);recDest=AC.createMediaStreamDestination();master.connect(recDest);bus=AC.createGain();bus.connect(master);an=AC.createAnalyser();an.fftSize=1024;anBuf=new Float32Array(an.fftSize);bus.connect(an);Object.values(M).forEach(attach)}catch(e){AC=null}}
+  if(AC&&AC.state!=='running')AC.resume().catch(()=>{});
+}
+function attach(m){if(!AC||m.kind==='image'||m.node)return;try{const s=AC.createMediaElementSource(m.el);const gn=AC.createGain();s.connect(gn);gn.connect(m.kind==='video'||m.route==='bus'?bus:master);m.node=gn}catch(e){}}
+function vol(m,v){if(m.node)m.node.gain.value=v;else m.el.volume=clamp(v,0,1)}
+function unlock(){Object.values(M).forEach(m=>{if(m.kind==='image'||m.unl)return;m.unl=true;const p=m.el.play();if(p&&p.then)p.then(()=>m.el.pause()).catch(()=>{})})}
+
+/* ---------- storage (IndexedDB, this browser only) ---------- */
+let DB=null;
+function openDB(){return new Promise(res=>{try{const r=indexedDB.open('studio-daily-ba',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('media',{keyPath:'id'});d.createObjectStore('projects',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
+function idb(store,mode,fn){return new Promise(res=>{if(!DB)return res(null);try{const tx=DB.transaction(store,mode);const r=fn(tx.objectStore(store));tx.oncomplete=()=>res(r&&r.result);tx.onerror=()=>res(null);tx.onabort=()=>res(null)}catch(e){res(null)}})}
+let saveT;function save(){clearTimeout(saveT);saveT=setTimeout(()=>{idb('projects','readwrite',st=>st.put({id:pid,name:S.name,updated:Date.now(),state:S}));try{localStorage.setItem('sdba-last',pid)}catch(e){}},500)}
+async function loadProject(id){const p=await idb('projects','readonly',st=>st.get(id));if(!p){toast('Không mở được dự án');return}
+  S=p.state;S.fx=S.fx||[];pid=p.id;sel=null;t=0;hist=[];
+  const ids=new Set([...S.clips.map(c=>c.mid),...S.music.map(m=>m.mid)]);
+  for(const mid of ids){if(M[mid])continue;const rec=await idb('media','readonly',st=>st.get(mid));if(rec)await createMedia(rec);else toast('Thiếu file media trong nháp')}
+  syncTop();renderPanel();refresh();try{localStorage.setItem('sdba-last',pid)}catch(e){}}
+async function addFiles(files,asMusic){
+  const list=[...files].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+  for(const f of list){
+    const rec={id:'m'+uid(),name:f.name,type:f.type||(asMusic?'audio/mpeg':'video/mp4'),blob:f};
+    const m=await createMedia(rec);
+    const ok=await idb('media','readwrite',st=>st.put(rec));if(ok===null&&DB)toast('Không lưu được '+f.name+' vào nháp (có thể hết dung lượng)');
+    snap();
+    if(asMusic){const dc=clipTotal()||D();const e=t+Math.min(m.dur,Math.max(5,dc-t));S.music.push({id:uid(),mid:m.id,name:f.name,s:+t.toFixed(2),e:+e.toFixed(2),off:0,vol:.35,fi:1,fo:1.5,duck:true});sel={k:'m',id:S.music.at(-1).id}}
+    else{const isImg=m.kind==='image';S.clips.push({id:uid(),mid:m.id,name:f.name,a:0,b:isImg?3:+m.dur.toFixed(2),vol:1,fit:'cover',img:isImg});sel={k:'c',id:S.clips.at(-1).id}}
+    snapped=false;
+  }
+  renderPanel();done();
+}
+
+/* ---------- drawing ---------- */
+function wrap(text,maxW){const out=[];String(text).split('\n').forEach(par=>{let line='';par.split(/\s+/).forEach(w=>{const tr=line?line+' '+w:w;if(g.measureText(tr).width>maxW&&line){out.push(line);line=w}else line=tr});out.push(line)});return out}
+function rr(x,y,w,h,r){g.beginPath();if(g.roundRect)g.roundRect(x,y,w,h,r);else g.rect(x,y,w,h);g.fill()}
+const easeOut=p=>1-Math.pow(1-p,3),easeBack=p=>{const c=1.7;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
+function drawText(x){
+  const sz=x.size,emoji=x.style==='emoji';g.font=emoji?`${sz}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`:`${x.w} ${sz}px Roboto, Arial, sans-serif`;g.textAlign='center';g.textBaseline='middle';
+  const lines=wrap(x.text,W*.84),lh=sz*1.22,top=x.y*H,cx=x.x*W;let minX=W,maxX=0;
+  lines.forEach(ln=>{const tw=g.measureText(ln).width;minX=Math.min(minX,cx-tw/2);maxX=Math.max(maxX,cx+tw/2)});
+  const pad=x.style==='box'?sz*.35:sz*.12,box={id:x.id,x0:minX-pad,y0:top-pad*.5,x1:maxX+pad,y1:top+lh*lines.length+pad*.5};
+  const lt=t-x.s,dur=tEnd(x)-x.s,p=clamp(lt/.35,0,1);let a=1,k=1,dy=0,reveal=Infinity;
+  if(x.anim==='fade')a=p;else if(x.anim==='pop'){k=.4+.6*easeBack(p);a=Math.min(1,p*3)}else if(x.anim==='slide'){dy=(1-easeOut(p))*90;a=p}
+  else if(x.anim==='type'){const total=lines.reduce((s,l)=>s+[...l].length,0);reveal=Math.floor(total*clamp(lt/Math.min(1.5,Math.max(.3,dur*.6)),0,1))}
+  if(x.aout&&x.e!=null)a*=clamp((x.e-t)/.3,0,1);
+  if(a<=0)return box;
+  g.save();g.globalAlpha=a;const my=top+lh*lines.length/2;if(k!==1){g.translate(cx,my);g.scale(k,k);g.translate(-cx,-my)}if(dy)g.translate(0,dy);
+  let left=reveal;
+  lines.forEach((full,i)=>{let ln=full;if(reveal!==Infinity){const ch=[...full];ln=ch.slice(0,Math.max(0,left)).join('');left-=ch.length;if(!ln)return}
+    const cy=top+lh*i+lh/2,tw=g.measureText(ln).width,fw=g.measureText(full).width,lx=reveal!==Infinity?cx-fw/2+tw/2:cx;
+    if(x.style==='box'){const pp=sz*.32;g.fillStyle=x.bg||'#fff';rr(lx-tw/2-pp,cy-lh/2-pp*.15,tw+pp*2,lh+pp*.3,sz*.16);g.fillStyle=x.color;g.fillText(ln,lx,cy)}
+    else if(x.style==='outline'){g.lineJoin='round';g.lineWidth=sz*.17;g.strokeStyle=x.sc||'#000';g.strokeText(ln,lx,cy);g.fillStyle=x.color;g.fillText(ln,lx,cy)}
+    else if(emoji){g.fillStyle='#fff';g.fillText(ln,lx,cy)}
+    else{g.shadowColor='rgba(0,0,0,.65)';g.shadowBlur=14*Q;g.fillStyle=x.color;g.fillText(ln,lx,cy);g.shadowBlur=0}});
+  g.restore();return box
+}
+const FX={none:{br:1,ct:1,sat:1,warm:0,bw:0},sang:{br:1.15,ct:1.05,sat:1.05,warm:0,bw:0},am:{br:1.05,ct:1,sat:1.1,warm:.6,bw:0},lanh:{br:1,ct:1.02,sat:.95,warm:-.6,bw:0},film:{br:1,ct:1.12,sat:.8,warm:.3,bw:0},bw:{br:1.02,ct:1.12,sat:1,warm:0,bw:1}};
+const FXN={none:'Gốc',sang:'Sáng sủa',am:'Ấm áp',lanh:'Mát lạnh',film:'Film',bw:'Trắng đen'};
+const hasFilter='filter' in g;
+function fxStr(f){if(!f||(f.br==1&&f.ct==1&&f.sat==1&&!f.warm&&!f.bw))return'';let s=`brightness(${f.br}) contrast(${f.ct}) saturate(${f.sat})`;if(f.warm>0)s+=` sepia(${(f.warm*.35).toFixed(2)})`;if(f.warm<0)s+=` hue-rotate(${(f.warm*-14).toFixed(0)}deg)`;if(f.bw)s+=` grayscale(${f.bw})`;return s}
+const BW=36,BH=64,bgc=document.createElement('canvas');bgc.width=BW;bgc.height=BH;const bgx=bgc.getContext('2d');
+function drawMedia(el,sw,sh,c,k,ox,oy){
+  if(!sw||!sh)return;const fs=hasFilter?fxStr(c.f):'';k=k||1;ox=ox||0;oy=oy||0;
+  g.save();if(k!==1||ox||oy){g.translate(W/2+ox,H/2+oy);g.scale(k,k);g.translate(-W/2,-H/2)}
+  if(c.fit==='fit'){const bs=Math.max(BW/sw,BH/sh);bgx.drawImage(el,(BW-sw*bs)/2,(BH-sh*bs)/2,sw*bs,sh*bs);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(bgc,0,0,W,H);g.fillStyle='rgba(0,0,0,.45)';g.fillRect(0,0,W,H);
+    const s2=Math.min(W/sw,H/sh);if(fs)g.filter=fs;g.drawImage(el,(W-sw*s2)/2,(H-sh*s2)/2,sw*s2,sh*s2)}
+  else{const sc=Math.max(W/sw,H/sh);if(fs)g.filter=fs;g.drawImage(el,(W-sw*sc)/2,(H-sh*sc)/2,sw*sc,sh*sc)}
+  g.restore();
+}
+/* ---------- visual effects ---------- */
+const EFN={kenburns:'Phóng chậm',pulse:'Nhịp zoom',shake:'Rung lắc',flash:'Lóe sáng',strobe:'Nhấp nháy',glitch:'Glitch',vhs:'Film cũ',vignette:'Viền tối',focus:'Lấy nét',mirror:'Gương',sparkle:'Lấp lánh',bw:'Đen trắng'};
+const EFD={kenburns:'Zoom vào từ từ, kiểu phim tài liệu',pulse:'Phóng to theo nhịp như beat nhạc',shake:'Rung khung hình, hợp đoạn bất ngờ',flash:'Lóe trắng một lần ở đầu đoạn',strobe:'Chớp trắng liên tục',glitch:'Giật sọc, lệch màu kiểu lỗi kỹ thuật',vhs:'Hạt nhiễu và vệt quét kiểu băng cũ',vignette:'Tối bốn góc, tập trung vào giữa',focus:'Từ mờ chuyển sang nét',mirror:'Đối xứng trái phải',sparkle:'Ngôi sao lấp lánh trên hình',bw:'Chuyển đen trắng trong đoạn này'};
+const rnd=n=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const fr=()=>Math.floor(t*30);
+function geoFx(f){const a=f.amt??.6,lt=t-f.s,d=Math.max(.1,f.e-f.s);
+  if(f.type==='kenburns'){const p=clamp(lt/d,0,1),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;return{k:1+.2*a*e,x:0,y:0}}
+  if(f.type==='pulse'){const ph=(lt%.5)/.5;return{k:1+.1*a*Math.exp(-ph*6),x:0,y:0}}
+  if(f.type==='shake'){const n=fr();return{k:1+.06*a,x:(rnd(n)-.5)*70*a,y:(rnd(n+99)-.5)*70*a}}
+  return{k:1,x:0,y:0}}
+const SC=document.createElement('canvas'),scx=SC.getContext('2d'),TN=document.createElement('canvas'),tnx=TN.getContext('2d');TN.width=54;TN.height=96;
+let NOISE=null,SCAN=null;
+function snap2(){if(SC.width!==cv.width||SC.height!==cv.height){SC.width=cv.width;SC.height=cv.height}scx.clearRect(0,0,SC.width,SC.height);scx.drawImage(cv,0,0)}
+function postFx(f){const a=f.amt??.6,lt=t-f.s,d=Math.max(.1,f.e-f.s),cw=cv.width,ch=cv.height;
+  if(f.type==='flash'){if(lt<.4){g.save();g.globalAlpha=a*(1-lt/.4);g.fillStyle='#fff';g.fillRect(0,0,W,H);g.restore()}}
+  else if(f.type==='strobe'){if(fr()%8<2){g.save();g.globalAlpha=a*.85;g.fillStyle='#fff';g.fillRect(0,0,W,H);g.restore()}}
+  else if(f.type==='vignette'){const gr=g.createRadialGradient(W/2,H/2,H*.22,W/2,H/2,H*.72);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,`rgba(0,0,0,${(.85*a).toFixed(2)})`);g.fillStyle=gr;g.fillRect(0,0,W,H)}
+  else if(f.type==='bw'){g.save();g.globalCompositeOperation='saturation';g.fillStyle='#808080';g.globalAlpha=Math.min(1,a*1.4);g.fillRect(0,0,W,H);g.restore()}
+  else if(f.type==='glitch'){const n=fr();if(rnd(n*3)>.35){snap2();g.save();g.setTransform(1,0,0,1,0,0);const sl=4+Math.floor(rnd(n)*5);
+      for(let i=0;i<sl;i++){const y=Math.floor(rnd(n+i*7)*ch),hh=Math.max(2,Math.floor((.01+rnd(n+i*13)*.06)*ch)),dx=Math.round((rnd(n+i*17)-.5)*.18*a*cw);g.drawImage(SC,0,y,cw,hh,dx,y,cw,hh);
+        if(rnd(n+i)>.5){g.globalCompositeOperation='screen';g.fillStyle=rnd(n+i*5)>.5?'rgba(255,0,90,.35)':'rgba(0,220,255,.35)';g.fillRect(0,y,cw,hh);g.globalCompositeOperation='source-over'}}
+      g.restore()}}
+  else if(f.type==='vhs'){if(!NOISE){NOISE=document.createElement('canvas');NOISE.width=NOISE.height=160;const nx=NOISE.getContext('2d'),id=nx.createImageData(160,160);for(let i=0;i<id.data.length;i+=4){const v=Math.random()*255;id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=255}nx.putImageData(id,0,0);
+      SCAN=document.createElement('canvas');SCAN.width=4;SCAN.height=6;const sx=SCAN.getContext('2d');sx.fillStyle='rgba(0,0,0,.5)';sx.fillRect(0,0,4,2)}
+    const n=fr();g.save();g.globalAlpha=.16*a;g.globalCompositeOperation='overlay';g.translate(-rnd(n)*160,-rnd(n+5)*160);g.fillStyle=g.createPattern(NOISE,'repeat');g.fillRect(0,0,W+160,H+160);g.restore();
+    g.save();g.globalAlpha=.5*a;g.fillStyle=g.createPattern(SCAN,'repeat');g.fillRect(0,0,W,H);g.globalAlpha=.12*a;g.fillStyle='#ff9a3c';g.globalCompositeOperation='soft-light';g.fillRect(0,0,W,H);g.restore();
+    if(rnd(n*11)>.92){g.save();g.globalAlpha=.25*a;g.fillStyle='#fff';g.fillRect(0,rnd(n)*H,W,6+rnd(n+3)*20);g.restore()}}
+  else if(f.type==='focus'){const p=clamp(lt/Math.min(1.2,d),0,1);if(p<1){snap2();tnx.drawImage(SC,0,0,54,96);g.save();g.globalAlpha=(1-p)*Math.min(1,a*1.4);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(TN,0,0,W,H);g.restore()}}
+  else if(f.type==='mirror'){snap2();g.save();g.setTransform(-1,0,0,1,cw,0);g.drawImage(SC,0,0,Math.floor(cw/2),ch,0,0,Math.floor(cw/2),ch);g.restore()}
+  else if(f.type==='sparkle'){g.save();g.fillStyle='#fff';g.shadowColor='rgba(255,255,255,.9)';g.shadowBlur=18*Q;const cnt=Math.round(8+a*14);
+    for(let i=0;i<cnt;i++){const x=rnd(i*3.1+f.s)*W,y=rnd(i*7.7+f.s)*H*.8+H*.05,tw=Math.max(0,Math.sin(t*5+i*1.7)),r=(18+rnd(i*5.3)*34)*(.6+a)*(.35+.65*tw);if(r<1)continue;
+      g.beginPath();g.moveTo(x,y-r);g.quadraticCurveTo(x,y,x+r,y);g.quadraticCurveTo(x,y,x,y+r);g.quadraticCurveTo(x,y,x-r,y);g.quadraticCurveTo(x,y,x,y-r);g.fill()}
+    g.restore()}
+}
+const TRD=.5,TRN={none:'Không',fade:'Mờ qua đen',white:'Lóe sáng',zoom:'Phóng to',slide:'Trượt vào'};
+let Q=1;function setQ(v){v=Math.round(clamp(v,.4,1)*20)/20;if(v===Q)return;Q=v;cv.width=Math.round(W*Q);cv.height=Math.round(H*Q)}
+const previewQ=()=>{const r=cv.getBoundingClientRect();return r.height?r.height*(window.devicePixelRatio||1)/H:.5};
+function draw(){
+  g.setTransform(Q,0,0,Q,0,0);g.fillStyle='#000';g.fillRect(0,0,W,H);
+  const h=clipAt(t);
+  if(h){const m=M[h.c.mid],lt=t-h.cs,len=clen(h.c),nx=S.clips[h.i+1],tr=h.c.tr||'none';let k=1,ox=0,ov=0,ovc='#000';
+    if(lt<TRD&&h.i>0){const p=lt/TRD;if(tr==='zoom')k=1+.18*(1-easeOut(p));else if(tr==='slide')ox=W*(1-easeOut(p));else if((tr==='fade'||tr==='white')&&p<.5){ov=1-p*2;ovc=tr==='white'?'#fff':'#000'}}
+    if(nx&&(nx.tr==='fade'||nx.tr==='white')&&len-lt<TRD/2){ov=Math.max(ov,1-(len-lt)/(TRD/2));ovc=nx.tr==='white'?'#fff':'#000'}
+    const act=(S.fx||[]).filter(f=>t>=f.s&&t<f.e);let oy=0;act.forEach(f=>{const r=geoFx(f);k*=r.k;ox+=r.x;oy+=r.y});
+    if(m&&m.ok){try{if(m.kind==='image')drawMedia(m.el,m.el.naturalWidth,m.el.naturalHeight,h.c,k,ox,oy);else if(m.el.readyState>=2)drawMedia(m.el,m.el.videoWidth,m.el.videoHeight,h.c,k,ox,oy)}catch(e){}}
+    act.forEach(postFx);
+    if(ov>0){g.save();g.globalAlpha=clamp(ov,0,1);g.fillStyle=ovc;g.fillRect(0,0,W,H);g.restore()}}
+  else if(!S.clips.length){g.fillStyle='#1b1e24';g.fillRect(0,0,W,H);g.fillStyle='#9aa1ad';g.font='500 44px Roboto, Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('Bấm “Thêm clip” để bắt đầu',W/2,H*.47)}
+  hits=[];S.texts.forEach(x=>{if(t>=x.s&&t<tEnd(x))hits.push(drawText(x))});
+  if(exporting||clean)return;
+  if(sel&&sel.k==='t'){const b=hits.find(b=>b.id===sel.id);if(b){g.save();g.setLineDash([18,12]);g.lineWidth=4;g.strokeStyle='#FFFF00';g.strokeRect(b.x0,b.y0,b.x1-b.x0,b.y1-b.y0);g.restore()}}
+  if(safe){g.fillStyle='rgba(255,70,70,.16)';g.fillRect(0,H*.755,W,H*.245);g.fillRect(W-140,H*.45,140,H*.305);g.fillStyle='rgba(255,255,255,.55)';g.font='500 30px Roboto, Arial, sans-serif';g.textAlign='center';g.fillText('UI TikTok che vùng này',W/2,H*.79)}
+  if(recV){g.fillStyle='#e03a3a';g.beginPath();g.arc(70,H-70,22,0,7);g.fill()}
+}
+
+/* ---------- playback engine ---------- */
+function syncMedia(){
+  const h=clipAt(t),want=h?M[h.c.mid]:null;
+  Object.values(M).forEach(m=>{if(m.kind==='video'&&m!==want&&!m.el.paused)m.el.pause()});
+  if(want&&want.kind==='video'&&want.ok){const el=want.el,exp=h.c.a+(t-h.cs)*sp(h.c);vol(want,h.c.vol);if(el.playbackRate!==sp(h.c))el.playbackRate=sp(h.c);
+    if(playing){if(Math.abs(el.currentTime-exp)>.3&&!el.seeking)el.currentTime=exp;if(el.paused&&!el.seeking){const p=el.play();if(p&&p.catch)p.catch(()=>{})}
+      const nx=S.clips[h.i+1],nm=nx&&M[nx.mid];if(nm&&nm!==want&&nm.kind==='video'&&nm.ok&&h.cs+clen(h.c)-t<1&&nm.el.paused&&!nm.el.seeking&&Math.abs(nm.el.currentTime-nx.a)>.05){nm.el.currentTime=nx.a}}
+    else{if(!el.paused)el.pause();if(Math.abs(el.currentTime-exp)>.04&&!el.seeking)el.currentTime=exp}}
+  let voiced=false;if(an&&playing){an.getFloatTimeDomainData(anBuf);let s=0;for(let i=0;i<anBuf.length;i++)s+=anBuf[i]*anBuf[i];voiced=Math.sqrt(s/anBuf.length)>.02}
+  duck+=((voiced?.3:1)-duck)*.12;
+  S.music.forEach(mu=>{const m=M[mu.mid];if(!m||!m.ok)return;const el=m.el,inside=playing&&t>=mu.s&&t<mu.e;
+    if(inside){let exp=mu.off+(t-mu.s);if(mu.loop===false){if(exp>=m.dur-.02){if(!el.paused)el.pause();return}}else if(m.dur>0)exp=exp%m.dur;if(el.paused){const p=el.play();if(p&&p.catch)p.catch(()=>{})}if(Math.abs(el.currentTime-exp)>.3)el.currentTime=exp;
+      let v=mu.vol*(mu.fi>0?Math.min(1,(t-mu.s)/mu.fi):1)*(mu.fo>0?Math.min(1,(mu.e-t)/mu.fo):1);if(mu.duck)v*=duck;vol(m,Math.max(0,v))}
+    else if(!el.paused)el.pause()});
+}
+const IPL='<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>',IP='<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+function play(){if(exporting)return;ensureAudio();unlock();if(t>=D()-.05)t=0;playing=true;lastNow=performance.now();$('#play').innerHTML=IP;$('#play').setAttribute('aria-label','Dừng')}
+function pause(){playing=false;$('#play').innerHTML=IPL;$('#play').setAttribute('aria-label','Phát');Object.values(M).forEach(m=>{if(m.el&&m.kind!=='image'&&!m.el.paused)m.el.pause()})}
+function tick(now){
+  if(playing){const dt=Math.min(.25,(now-lastNow)/1000),h=clipAt(t),m=h&&M[h.c.mid];
+    if(m&&m.kind==='video'&&m.ok){const el=m.el,end=h.cs+clen(h.c);
+      if(el.ended||(!el.seeking&&el.currentTime>=h.c.b-.02)){stall=0;t=end+1e-4}
+      else if(el.seeking||el.paused||el.readyState<3){stall+=dt;if(stall>1.2)t+=dt}
+      else{stall=0;const nt=h.cs+(el.currentTime-h.c.a)/sp(h.c);t=Math.abs(nt-t)<.5?Math.max(h.cs,nt):t+dt}}
+    else{stall=0;t+=dt}
+    const d=D();if(t>=d){t=d;if(exporting)finishExport();else{pause();if(recV)stopRec()}}}
+  lastNow=now;syncMedia();draw();
+  if(!(drag&&drag.mode==='pan'&&drag.moved&&!drag.touch)){const tl=$('#tls'),tg=Math.round(t*pps);if(Math.abs(tl.scrollLeft-tg)>1&&!userScroll)tl.scrollLeft=tg}updBar();
+  if(exporting)$('#expBar').style.width=(t/D()*100)+'%';
+  requestAnimationFrame(tick);
+}
+function seek(v){t=clamp(v,0,D())}
+
+/* ---------- timeline ---------- */
+let pps=40;
+function lanes(items){const ends=[];return items.map(x=>{let l=ends.findIndex(e=>e<=x.s+1e-3);if(l<0){l=ends.length;ends.push(0)}ends[l]=tEnd(x)===Infinity?D():tEnd(x);return l})}
+function renderTL(){
+  const d=D(),half=Math.round($('#tls').clientWidth/2),w=d*pps+half*2+24;const ti=$('#tlin');ti.style.paddingLeft=ti.style.paddingRight=half+'px';ti.style.width=w+'px';
+  const step=pps>=80?1:pps>=30?2:pps>=15?5:10;let r='';for(let s=0;s<=d+step;s+=step)r+=`<i style="left:${s*pps}px"></i><span style="left:${s*pps}px">${fmt(s).replace(/\.0$/,'')}</span>`;$('#ruler').innerHTML=r;
+  const st=starts();
+  $('#tc').style.height='44px';$('#tc').innerHTML=S.clips.map((c,i)=>`<div class="it c${isSel('c',c.id)?' sel':''}" data-k="c" data-id="${c.id}" style="top:4px;left:${st[i]*pps}px;width:${Math.max(14,clen(c)*pps-2)}px"><span class="h l"></span>${esc(c.name)}<span class="h r"></span></div>`).join('');
+  const tl=lanes(S.texts),tn=Math.max(1,...tl.map(l=>l+1));$('#tt').style.height=(tn*40+4)+'px';$('#lt').style.height=(tn*40+4)+'px';
+  $('#tt').innerHTML=S.texts.map((x,i)=>{const e=x.e==null?d:x.e;return`<div class="it t${isSel('t',x.id)?' sel':''}" data-k="t" data-id="${x.id}" style="top:${4+tl[i]*40}px;left:${x.s*pps}px;width:${Math.max(14,(e-x.s)*pps-2)}px">${x.role!=='tag'?'<span class="h l"></span>':''}${esc(x.text)}${x.e!=null?'<span class="h r"></span>':''}</div>`}).join('');
+  const ml=lanes(S.music),mn=Math.max(1,...ml.map(l=>l+1));$('#tm').style.height=(mn*40+4)+'px';$('#lm').style.height=(mn*40+4)+'px';
+  const FXL=S.fx||[],el2=lanes(FXL),en=Math.max(1,...el2.map(l=>l+1));$('#te').style.height=(en*40+4)+'px';$('#le').style.height=(en*40+4)+'px';
+  $('#te').innerHTML=FXL.map((f,i)=>`<div class="it e${isSel('e',f.id)?' sel':''}" data-k="e" data-id="${f.id}" style="top:${4+el2[i]*40}px;left:${f.s*pps}px;width:${Math.max(14,(f.e-f.s)*pps-2)}px"><span class="h l"></span>${EFN[f.type]||f.type}<span class="h r"></span></div>`).join('');
+  $('#tm').innerHTML=S.music.map((m,i)=>`<div class="it ${m.kind==='voice'?'v':m.kind==='sfx'?'x':'m'}${isSel('m',m.id)?' sel':''}" data-k="m" data-id="${m.id}" style="top:${4+ml[i]*40}px;left:${m.s*pps}px;width:${Math.max(14,(m.e-m.s)*pps-2)}px"><span class="h l"></span>${m.kind==='voice'?'Giọng: ':m.kind==='sfx'?'SFX: ':'Nhạc: '}${esc(m.name)}<span class="h r"></span></div>`).join('');
+}
+const isSel=(k,id)=>sel&&sel.k===k&&sel.id===id;
+const arrOf=k=>k==='c'?S.clips:k==='t'?S.texts:k==='e'?(S.fx=S.fx||[]):S.music;
+function findSel(){if(!sel)return null;const arr=arrOf(sel.k);return arr.find(x=>x.id===sel.id)||null}
+function refresh(){renderTL();syncPanel()}
+const tlx=e=>{const r=$('#tc').getBoundingClientRect();return(e.clientX-r.left)/pps};
+let drag=null,userScroll=false,usT=0;
+const TLS=$('#tls');
+TLS.addEventListener('scroll',()=>{if(exporting)return;const ts=TLS.scrollLeft/pps;if(Math.abs(ts-t)>1.5/pps){userScroll=true;clearTimeout(usT);usT=setTimeout(()=>userScroll=false,120);if(playing)pause();t=clamp(ts,0,D())}},{passive:true});
+TLS.addEventListener('wheel',e=>{if(e.ctrlKey)return;if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();TLS.scrollLeft+=e.deltaY}},{passive:false});
+$('#tlin').addEventListener('pointerdown',e=>{
+  if(e.button>0)return;
+  const it=e.target.closest('.it'),handle=e.target.classList.contains('h');
+  if(it){const k=it.dataset.k,id=it.dataset.id,selB=isSel(k,id);
+    if(handle||(selB&&k!=='c')){if(!selB){sel={k,id};renderPanel();renderTL()}const o=findSel();if(!o||(o.role==='tag'&&!handle))return startPan(e,it);
+      const side=handle?(e.target.classList.contains('l')?'l':'r'):'b';
+      drag={mode:'edit',k,o,side,x0:e.clientX,a0:o.a,b0:o.b,s0:o.s,e0:o.e,moved:false};$('#tlin').setPointerCapture(e.pointerId);return}}
+  startPan(e,it);
+});
+function startPan(e,it){drag={mode:'pan',it,x0:e.clientX,y0:e.clientY,sl0:TLS.scrollLeft,moved:false,touch:e.pointerType!=='mouse'};if(!drag.touch){$('#tlin').setPointerCapture(e.pointerId);TLS.classList.add('grabbing')}}
+$('#tlin').addEventListener('pointermove',e=>{
+  if(!drag)return;const dx=e.clientX-drag.x0;
+  if(drag.mode==='pan'){if(!drag.moved&&Math.abs(dx)>4){drag.moved=true;if(playing)pause()}if(drag.moved&&!drag.touch){TLS.scrollLeft=drag.sl0-dx}return}
+  if(!drag.moved&&Math.abs(dx)<4)return;if(!drag.moved){drag.moved=true;snap()}
+  const ds=dx/pps,o=drag.o,dsm=drag.k==='c'?ds*sp(o):ds;
+  if(drag.k==='c'){const m=M[o.mid],max=o.img?600:(m?m.dur:o.b0);if(drag.side==='l')o.a=+clamp(drag.a0+dsm,0,o.b-.2).toFixed(2);else if(drag.side==='r')o.b=+clamp(drag.b0+dsm,o.a+.2,max).toFixed(2)}
+  else if(o.role==='tag'){}
+  else if(drag.side==='l')o.s=+clamp(drag.s0+ds,0,o.e-.2).toFixed(2);
+  else if(drag.side==='r')o.e=+Math.max(o.s+.2,drag.e0+ds).toFixed(2);
+  else{const len=drag.e0-drag.s0;o.s=+Math.max(0,drag.s0+ds).toFixed(2);o.e=+(o.s+len).toFixed(2)}
+  refresh();
+});
+$('#tlin').addEventListener('pointerup',e=>{
+  const d=drag;drag=null;TLS.classList.remove('grabbing');if(!d)return;
+  if(d.mode==='edit'){if(d.moved)done();return}
+  if(d.moved)return;
+  if(d.it){const k=d.it.dataset.k,id=d.it.dataset.id;if(!isSel(k,id)){sel={k,id};renderPanel();renderTL()}}
+  else{if(playing)pause();seek(tlx(e))}
+});
+$('#tlin').addEventListener('pointercancel',()=>{if(drag&&drag.mode==='edit'&&drag.moved)done();drag=null;TLS.classList.remove('grabbing')});
+$('#zoom').addEventListener('input',e=>{pps=+e.target.value;renderTL();TLS.scrollLeft=Math.round(t*pps)});
+
+/* ---------- canvas: select & drag text ---------- */
+let cdrag=null;
+const cpt=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}};
+cv.addEventListener('pointerdown',e=>{const p=cpt(e);const b=[...hits].reverse().find(b=>p.x>=b.x0&&p.x<=b.x1&&p.y>=b.y0&&p.y<=b.y1);
+  if(!b){if(sel){sel=null;renderPanel();renderTL()}return}
+  if(!isSel('t',b.id)){sel={k:'t',id:b.id};renderPanel();renderTL()}const o=findSel();cdrag={o,p,x0:o.x,y0:o.y,moved:false};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(!cdrag)return;const p=cpt(e),dx=p.x-cdrag.p.x,dy=p.y-cdrag.p.y;if(!cdrag.moved&&Math.hypot(dx,dy)<8)return;if(!cdrag.moved){cdrag.moved=true;snap()}
+  cdrag.o.x=+clamp(cdrag.x0+dx/W,.05,.95).toFixed(3);cdrag.o.y=+clamp(cdrag.y0+dy/H,0,.95).toFixed(3);syncPanel()});
+const endC=()=>{if(cdrag&&cdrag.moved)done();cdrag=null};cv.addEventListener('pointerup',endC);cv.addEventListener('pointercancel',endC);
+
+/* ---------- inspector ---------- */
+const num=(l,f,step=.1)=>`<label>${l}<input type="number" step="${step}" data-f="${f}" data-n="1"></label>`;
+const rng=(l,f,min,max,step)=>`<label>${l}<input type="range" min="${min}" max="${max}" step="${step}" data-f="${f}" data-n="1"></label>`;
+const PAL=['#ffffff','#111111','#FFFF00','#FFD23F','#ff8a00','#ff5c5c','#ff7eb6','#7cd4ff','#5ce1a0'];
+const capName=()=>S.mode==='daily'?'Caption':'Phụ đề';const rname=r=>r==='title'?'Tiêu đề':r==='cap'?capName():'Chữ tự do';
+function swatches(key,cur){const lc=String(cur||'').toLowerCase();return `<div class="sw">${PAL.map(c=>`<button data-act="col" data-k="${key}" data-v="${c}" class="${c.toLowerCase()===lc?'cur':''}" style="background:${c}" aria-label="${key} ${c}"></button>`).join('')}<input type="color" data-f="${key}" aria-label="Chọn màu khác"></div>`}
+function colorBlock(o){const n=S.texts.filter(x=>x.role===o.role).length,all=S.texts.filter(x=>x.role!=='tag'&&x.role!=='sticker').length,ov=(S.rc||{})[o.role];
+  return `<hr><h3>Màu chữ</h3>
+  <div class="cg">Màu chữ${swatches('color',o.color)}</div>
+  ${o.style==='box'?`<div class="cg">Màu nền${swatches('bg',o.bg)}</div>`:''}
+  ${o.style==='outline'?`<div class="cg">Màu viền${swatches('sc',o.sc||'#000000')}</div>`:''}
+  <div class="btns"><button data-act="syncRole">Đồng bộ cho mọi ${rname(o.role)} (${n})</button></div>
+  <div class="btns"><button data-act="syncAll">Đồng bộ cho tất cả chữ (${all})</button></div>${ov?'<div class="btns"><button data-act="resetRole">Về màu mẫu</button></div>':''}
+  <p class="note">Đồng bộ theo kiểu sẽ áp dụng luôn cho ${rname(o.role)} thêm sau này. Ô số ngày và sticker giữ màu riêng.</p><hr>`}
+function renderPanel(){
+  const o=findSel(),P=$('#panel');if(o){pmode='';if(sel.k==='c'&&!o.tr)o.tr='none';if(sel.k==='t'&&!o.anim)o.anim='none'}
+  if(!o&&pmode==='tpl'){const md=S.mode||'none';P.innerHTML=`<h3>Mẫu</h3><p class="note">Mẫu chỉ là bộ kiểu chữ và nhãn dựng sẵn. Đổi mẫu không ảnh hưởng clip, nhạc hay nội dung chữ.</p>
+    <div class="plist">${[['none','Không dùng mẫu','Chữ trắng viền đen, phụ đề kiểu TikTok, không nhãn'],['daily','Daily','Ô DAY N vàng, tiêu đề trắng, caption nền trắng'],['weekend','Cuối tuần','Nhãn CUỐI TUẦN, tiêu đề vàng, phụ đề viền đen']].map(([k,n,d])=>`<button class="tplc${md===k?' on':''}" data-act="tpl" data-v="${k}"><b>${n}</b><small>${d}</small></button>`).join('')}</div>
+    ${md==='daily'?`<label>Số ngày<input id="tplDay" type="number" min="1" value="${S.day}"></label>`:''}
+    <div class="btns"><button data-act="pback">Xong</button></div>`;return}
+  if(!o&&pmode==='eff'){P.innerHTML=`<h3>Hiệu ứng hình ảnh</h3><p class="note">Chạm để chèn tại đầu phát. Hiệu ứng nằm trên track Hiệu ứng, kéo hai đầu khối để đổi độ dài. Chữ và sticker không bị ảnh hưởng.</p>
+    <div class="plist">${Object.keys(EFN).map(k=>`<button class="tplc" data-act="eff" data-v="${k}"><b>${EFN[k]}</b><small>${EFD[k]}</small></button>`).join('')}</div>
+    <div class="btns"><button data-act="pback">Xong</button></div>`;return}
+  if(!o&&pmode==='stk'){P.innerHTML=`<h3>Sticker</h3><p class="note">Chèn tại đầu phát, hiện 2 giây. Kéo trên màn hình để đặt vị trí.</p>
+    <div class="stk">${STK.map(s=>`<button data-act="stk" data-v="${s}" aria-label="Sticker ${s}">${s}</button>`).join('')}</div>
+    <p class="note">Sticker dùng emoji của máy: iPhone, Android và Windows sẽ vẽ hơi khác nhau.</p><div class="btns"><button data-act="pback">Xong</button></div>`;return}
+  if(!o&&pmode==='sfx'){P.innerHTML=`<h3>Hiệu ứng âm thanh</h3><p class="note">Âm thanh do trang tự tạo, không lo bản quyền. Chèn tại đầu phát.</p>
+    <div class="btns g3">${Object.keys(SFX).map(k=>`<button data-act="sfx" data-v="${k}">${SFX[k].n}</button>`).join('')}</div>
+    <div class="btns"><button data-act="pback">Xong</button></div>`;return}
+  if(!o){const ic=id=>{const s=document.querySelector('#'+id+' svg');return s?s.outerHTML:''};
+    const QA=[['tText','Chữ'],['tCap',capName()],['tMus','Nhạc nền'],['tSfx','Âm thanh'],['tStk','Sticker'],['tEff','Hiệu ứng'],['tTr','Chuyển cảnh'],['tRec','Thu giọng'],['tTpl','Mẫu']];
+    P.innerHTML=`<div class="ph-head"><h3>Thêm vào video</h3><p class="note">Chèn tại đầu phát · <span id="phT">${fmt(t)}</span></p></div>
+    <button class="drop" data-act="addClip" id="drop">
+      <span class="ic">${ic('tAdd')}</span>
+      <span class="dt"><b>Thêm clip</b><small>Bấm để chọn hoặc kéo thả video, ảnh, nhạc vào đây</small><small class="mute2">Tự xếp theo tên file 01, 02…</small></span>
+    </button>
+    <div class="qa">${QA.map(([id,l])=>`<button data-act="tool" data-v="${id}"${(id==='tTr'||id==='tEff')&&!S.clips.length?' disabled title="Cần thêm clip trước"':''}>${ic(id)}<span>${l}</span></button>`).join('')}</div>
+    <section class="card">
+      <div class="card-h">${ic('tCap')}<b>${capName()} hàng loạt</b><span class="badge" id="bulkN">0 dòng</span></div>
+      <textarea id="bulk" rows="5" placeholder="Dán lời thoại vào đây, mỗi câu một dòng"></textarea>
+      <div class="split"><button class="dark" data-act="bulk">Rải đều từ đầu phát</button><button data-act="srt" title="Nhập file .srt">Nhập .srt</button></div>
+      <p class="note">Thời gian chia theo độ dài câu, rồi kéo từng khối trên timeline cho khớp giọng. File .srt giữ đúng thời gian sẵn có.</p>
+    </section>
+    <section class="keys-wrap"><p class="ph">Phím tắt</p><div class="keys">
+      <span>Phát / dừng</span><kbd>Space</kbd><span>Tách clip</span><kbd>S</kbd><span>Xóa mục đang chọn</span><kbd>Delete</kbd><span>Hoàn tác</span><span><kbd>Ctrl</kbd> <kbd>Z</kbd></span></div></section>
+    <p class="note touch-tip">Mẹo: kéo chữ trực tiếp trên màn hình xem trước để đổi vị trí, vuốt timeline để tua.</p>`;return}
+  if(sel.k==='c'){const m=M[o.mid],f=o.f||FX.none,first=S.clips.indexOf(o)===0;P.innerHTML=`<h3>Clip: ${esc(o.name)}</h3>
+    ${o.img?`<div class="row">${num('Thời lượng (giây)','b')}</div>`:`<div class="row">${num('Bắt đầu từ (giây)','a')}${num('Kết thúc ở (giây)','b')}</div><p class="note">Độ dài gốc: ${fmt(m?m.dur:0)}. Có thể kéo hai đầu khối trên timeline để cắt.</p>`}
+    ${o.img?'':`<div id="sec-speed"><label>Tốc độ</label><div class="btns">${[.5,1,1.5,2,3].map(s=>`<button data-act="speed" data-v="${s}" class="${sp(o)===s?'on':''}">${String(s).replace('.',',')}x</button>`).join('')}</div>
+    <p class="note">Độ dài trên video: ${clen(o).toFixed(1).replace('.',',')} giây.</p></div>`}
+    ${o.img?'':`<div id="sec-vol">${rng('Âm lượng clip','vol',0,2,.05)}</div>`}
+    <hr><div id="sec-fx"><h3>Bộ lọc</h3>${hasFilter?'':'<p class="note">Trình duyệt này chưa hỗ trợ bộ lọc trên canvas; hãy dùng Chrome hoặc Safari 18 trở lên.</p>'}
+    <div class="btns g3">${Object.keys(FX).map(k=>`<button data-act="fxp" data-v="${k}" class="${(o.fxp||'none')===k?'on':''}">${FXN[k]}</button>`).join('')}</div>
+    <div class="row">${rng('Độ sáng','f.br',.5,1.6,.01)}${rng('Tương phản','f.ct',.5,1.6,.01)}</div>
+    <div class="row">${rng('Độ bão hòa','f.sat',0,2,.01)}${rng('Lạnh ↔ Ấm','f.warm',-1,1,.05)}</div>
+    <div class="btns"><button data-act="fxAll">Áp dụng bộ lọc cho mọi clip</button></div></div>
+    <hr><div id="sec-tr"><h3>Chuyển cảnh</h3>${first?'<p class="note">Clip đầu tiên không có chuyển cảnh vào.</p>':`<label>Hiệu ứng khi chuyển từ clip trước sang clip này<select data-f="tr">${Object.keys(TRN).map(k=>`<option value="${k}">${TRN[k]}</option>`).join('')}</select></label>
+    <div class="btns"><button data-act="trAll">Dùng hiệu ứng này cho mọi clip</button></div>`}</div>
+    <hr><div id="sec-fit"><label>Khung hình<select data-f="fit"><option value="cover">Phủ kín khung dọc</option><option value="fit">Giữ nguyên, nền mờ</option></select></label></div>
+    <div class="btns"><button data-act="left">← Lên trước</button><button data-act="right">Ra sau →</button></div>
+    <div class="btns"><button data-act="split">✂ Tách tại đầu phát</button><button data-act="del">Xóa clip</button></div>`;if(!o.f)o.f=Object.assign({},FX.none)}
+  else if(sel.k==='t'){const tag=o.role==='tag',stk=o.role==='sticker';P.innerHTML=`<h3>${tag?(S.mode==='daily'?'Ô số ngày':'Nhãn cuối tuần'):stk?'Sticker':'Chữ'}</h3>
+    ${tag?`<p class="note">${S.mode==='daily'?'Đổi số ngày trong mục Mẫu.':'Nhãn hiện suốt video.'} Muốn bỏ nhãn thì chọn Mẫu → Không dùng mẫu.</p>`:stk?'':`<label>Nội dung<textarea rows="3" data-f="text"></textarea></label>
+    <label>Kiểu<select data-f="role"><option value="title">Tiêu đề</option><option value="cap">${capName()}</option><option value="free">Tự do</option></select></label>`}
+    ${rng(stk?'Kích thước':'Cỡ chữ','size',24,stk?400:180,1)}
+    ${tag?'':`<label>Hiệu ứng xuất hiện<select data-f="anim"><option value="none">Không</option><option value="pop">Bật lên</option><option value="fade">Hiện dần</option><option value="slide">Trượt lên</option>${stk?'':'<option value="type">Đánh máy</option>'}</select></label>
+    <label class="chk"><input type="checkbox" data-f="aout"> Mờ dần khi ẩn</label>`}
+    ${tag||stk?'':colorBlock(o)}
+    <div class="row">${rng('Ngang','x',.05,.95,.005)}${rng('Dọc','y',0,.95,.005)}</div>
+    ${tag?'':`<div class="row">${num('Hiện từ (giây)','s')}${num('Đến (giây)','e')}</div>
+    <div class="btns"><button data-act="setS">Hiện từ đầu phát</button><button data-act="setE">Ẩn tại đầu phát</button></div>
+    <div class="btns"><button data-act="dup">Nhân bản</button><button data-act="del">Xóa chữ</button></div>`}`}
+  else if(sel.k==='e'){P.innerHTML=`<h3>Hiệu ứng: ${EFN[o.type]||o.type}</h3><p class="note">${EFD[o.type]||''}</p>
+    <label>Loại hiệu ứng<select data-f="type">${Object.keys(EFN).map(k=>`<option value="${k}">${EFN[k]}</option>`).join('')}</select></label>
+    ${rng('Cường độ','amt',.1,1,.05)}
+    <div class="row">${num('Bắt đầu (giây)','s')}${num('Kết thúc (giây)','e')}</div>
+    <div class="btns"><button data-act="setS">Bắt đầu tại đầu phát</button><button data-act="setE">Dừng tại đầu phát</button></div>
+    <div class="btns"><button data-act="dup">Nhân bản</button><button data-act="del">Xóa</button></div>`}
+  else{const kd=o.kind||'music',lab=kd==='voice'?'Giọng thu':kd==='sfx'?'Hiệu ứng âm thanh':'Nhạc';P.innerHTML=`<h3>${lab}: ${esc(o.name)}</h3>
+    <div class="row">${num('Bắt đầu ở (giây)','s')}${num('Kết thúc ở (giây)','e')}</div>
+    <div class="btns"><button data-act="setS">Bắt đầu tại đầu phát</button><button data-act="setE">Dừng tại đầu phát</button></div>
+    ${kd==='music'?num('Phát từ giây thứ … của bài','off'):''}
+    ${rng('Âm lượng','vol',0,kd==='music'?1:2,.01)}
+    <div class="row">${num('Fade in (giây)','fi')}${num('Fade out (giây)','fo')}</div>
+    ${kd==='music'?`<label class="chk"><input type="checkbox" data-f="duck"> Tự nhỏ nhạc khi đang nói</label><p class="note">Bài ngắn hơn đoạn chèn sẽ tự lặp lại.</p>`:''}
+    ${kd==='voice'?'<p class="note">Nhạc nền đang bật "tự nhỏ khi nói" sẽ nhỏ xuống khi giọng thu phát.</p>':''}
+    <div class="btns"><button data-act="dup">Nhân bản</button><button data-act="del">Xóa</button></div>`}
+  syncPanel();
+}
+const gp=(o,f)=>f.split('.').reduce((a,k)=>a==null?a:a[k],o);function spath(o,f,v){const ks=f.split('.'),last=ks.pop();let a=o;ks.forEach(k=>{if(a[k]==null)a[k]={};a=a[k]});a[last]=v}
+function syncPanel(){const o=findSel();if(!o)return;document.querySelectorAll('#panel [data-f]').forEach(el=>{if(el===document.activeElement)return;const v=gp(o,el.dataset.f);if(el.type==='checkbox')el.checked=!!v;else el.value=v==null?'':(el.dataset.n&&typeof v==='number'?+v.toFixed(3):v)})}
+$('#panel').addEventListener('focusin',e=>{if(e.target.dataset.f)snap()});
+$('#panel').addEventListener('pointerdown',e=>{if(e.target.dataset.f)snap()});
+$('#panel').addEventListener('input',e=>{const f=e.target.dataset.f,o=findSel();if(!f||!o)return;snap();
+  let v=e.target.type==='checkbox'?e.target.checked:e.target.value;if(e.target.dataset.n){v=parseFloat(v);if(!isFinite(v))return}
+  if(f==='type'){o.type=v;renderPanel()}else if(f==='role'){o.role=v;applyPreset(o);const p=presetFor(v,S.mode);if(v!=='free')o.y=p.y;syncPanel()}else{spath(o,f,v);if(f.startsWith('f.'))o.fxp='custom'}
+  norm(o);if(e.target.type!=='range')renderTL()});
+$('#panel').addEventListener('change',e=>{if(e.target.dataset.f){const o=findSel();if(o)norm(o);done()}});
+function norm(o){if(sel.k==='c'){const m=M[o.mid];if(o.img){o.a=0;o.b=Math.max(.3,o.b)}else{const max=m?m.dur:o.b;o.a=clamp(o.a,0,max-.2);o.b=clamp(o.b,o.a+.2,max)}}
+  else if(o.e!=null){o.s=Math.max(0,o.s);o.e=Math.max(o.s+.2,o.e)}}
+$('#panel').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;act(b.dataset.act,b.dataset.v,b)});
+function act(a,v,btn){
+  const o=findSel();
+  if(a==='pback'){pmode='';renderPanel();return}
+  if(a==='tool'){const b=document.getElementById(v);if(b&&!b.disabled)b.click();return}
+  if(a==='eff'){snap();const dur=v==='kenburns'?Math.max(2,(()=>{const hh=clipAt(t);return hh?hh.cs+clen(hh.c)-t:3})()):v==='flash'?1:2;
+    const f={id:uid(),type:v,s:+t.toFixed(2),e:+(t+dur).toFixed(2),amt:.6};(S.fx=S.fx||[]).push(f);pmode='';sel={k:'e',id:f.id};renderPanel();done();toast('Đã chèn '+EFN[v]);return}
+  if(a==='tpl'){setMode(v);pmode='tpl';renderPanel();return}
+  if(a==='cover'){cover();return}
+  if(a==='sfx'){addSfx(v);return}
+  if(a==='addClip'){$('#fClip').click();return}if(a==='srt'){$('#fSrt').click();return}if(a==='addMus'){$('#fMus').click();return}
+  snap();
+  if(a==='addTitle'){const x=mkText('title','Tiêu đề mới',+t.toFixed(2),+(t+3).toFixed(2));S.texts.push(x);sel={k:'t',id:x.id};renderPanel()}
+  else if(a==='addFree'){const x=mkText('free','Nhập chữ',+t.toFixed(2),+(t+3).toFixed(2));S.texts.push(x);sel={k:'t',id:x.id};renderPanel()}
+  else if(a==='addCap'){const x=mkText('cap','Nội dung',+t.toFixed(2),+(t+3).toFixed(2));S.texts.push(x);sel={k:'t',id:x.id};renderPanel()}
+  else if(a==='bulk'){const lines=$('#bulk').value.split('\n').map(s=>s.trim()).filter(Boolean);if(!lines.length){toast('Chưa có dòng nào');snapped=false;return}
+    const end=Math.max(clipTotal(),t+lines.length*1.5),span=end-t,tot=lines.reduce((s,l)=>s+Math.max(8,l.length),0);let c=t;
+    lines.forEach(l=>{const d=span*Math.max(8,l.length)/tot;S.texts.push(mkText('cap',l,+c.toFixed(2),+(c+d).toFixed(2)));c+=d});toast('Đã tạo '+lines.length+' dòng')}
+  else if(a==='split'){splitAt()}
+  else if(a==='stk'){const x=mkText('sticker',v,+t.toFixed(2),+(t+2).toFixed(2));x.x=.5;S.texts.push(x);pmode='';sel={k:'t',id:x.id};renderPanel()}
+  else if(!o){snapped=false;return}
+  else if(a==='del'){if(o.role==='tag'){snapped=false;return}const arr=arrOf(sel.k);arr.splice(arr.indexOf(o),1);sel=null;renderPanel()}
+  else if(a==='left'||a==='right'){const i=S.clips.indexOf(o),j=a==='left'?i-1:i+1;if(j>=0&&j<S.clips.length){S.clips.splice(i,1);S.clips.splice(j,0,o)}}
+  else if(a==='color'){o.color=v}
+  else if(a==='col'){o[btn.dataset.k]=v;renderPanel()}
+  else if(a==='syncRole'){S.rc=S.rc||{};const r={color:o.color};if(o.style==='box')r.bg=o.bg;if(o.style==='outline')r.sc=o.sc||'#000000';S.rc[o.role]=r;let n=0;S.texts.forEach(x=>{if(x.role===o.role){rcApply(x);n++}});renderPanel();toast('Đã đồng bộ màu cho '+n+' '+rname(o.role))}
+  else if(a==='syncAll'){S.rc=S.rc||{};let n=0;['title','cap','free'].forEach(role=>{const r={color:o.color};if(o.style==='box')r.bg=o.bg;if(o.style==='outline')r.sc=o.sc||'#000000';S.rc[role]=Object.assign({},S.rc[role]||{},r)});S.texts.forEach(x=>{if(x.role!=='tag'&&x.role!=='sticker'){x.color=o.color;if(o.style==='box'&&x.style==='box')x.bg=o.bg;if(o.style==='outline'&&x.style==='outline')x.sc=o.sc||'#000000';n++}});renderPanel();toast('Đã đồng bộ màu cho '+n+' chữ')}
+  else if(a==='resetRole'){if(S.rc)delete S.rc[o.role];S.texts.forEach(x=>{if(x.role===o.role)applyPreset(x)});renderPanel();toast('Đã về màu mẫu cho '+rname(o.role))}
+  else if(a==='setS'){o.s=+t.toFixed(2);if(o.e!=null&&o.e<=o.s)o.e=+(o.s+2).toFixed(2)}
+  else if(a==='setE'){if(t>o.s+.1)o.e=+t.toFixed(2);else toast('Đầu phát phải nằm sau điểm bắt đầu')}
+  else if(a==='dup'){if(o.role==='tag'){snapped=false;return}const x=JSON.parse(JSON.stringify(o));x.id=uid();
+    if(sel.k==='c'){S.clips.splice(S.clips.indexOf(o)+1,0,x)}
+    else{const len=x.e-x.s;x.s=+o.e.toFixed(2);x.e=+(x.s+len).toFixed(2);arrOf(sel.k).push(x)}
+    sel={k:sel.k,id:x.id};renderPanel();toast('Đã nhân bản')}
+  else if(a==='speed'){o.speed=+v;renderPanel()}
+  else if(a==='fxp'){o.f=Object.assign({},FX[v]);o.fxp=v;renderPanel()}
+  else if(a==='fxAll'){S.clips.forEach(c=>{c.f=Object.assign({},o.f||FX.none);c.fxp=o.fxp});toast('Đã áp dụng cho '+S.clips.length+' clip')}
+  else if(a==='trAll'){S.clips.forEach((c,i)=>{if(i>0)c.tr=o.tr||'none'});toast('Đã áp dụng chuyển cảnh cho mọi clip')}
+  done();
+}
+function splitAt(){const h=clipAt(t);if(!h){toast('Đầu phát không nằm trên clip nào');return}const c=h.c,loc=c.a+(t-h.cs)*sp(c);
+  if(loc-c.a<.1||c.b-loc<.1){toast('Quá sát mép clip');return}
+  const n=Object.assign(JSON.parse(JSON.stringify(c)),{id:uid(),a:+loc.toFixed(2)});
+  if(c.img){const len=c.b-c.a;n.a=0;n.b=+(len-loc).toFixed(2)}
+  c.b=+loc.toFixed(2);
+  S.clips.splice(h.i+1,0,n);sel={k:'c',id:n.id};renderPanel()}
+
+/* ---------- top bar ---------- */
+const TPLN={none:'Không dùng',daily:'Daily',weekend:'Cuối tuần'};
+function syncTop(){$('#pname').value=S.name;lastTT=''}
+function setMode(m){if((S.mode||'none')===m)return;snap();S.mode=m;
+  if(m==='none')S.texts=S.texts.filter(x=>x.role!=='tag');
+  else if(!S.texts.some(x=>x.role==='tag'))S.texts.unshift(mkText('tag',tagText(),0,null));
+  S.texts.forEach(x=>{if(x.role==='tag'){applyPreset(x);x.text=tagText();x.y=presetFor('tag',m).y}else if(x.role!=='free'&&x.role!=='sticker')applyPreset(x)});
+  if(m==='daily'&&/^Video mới$/.test(S.name)){S.name='Day '+S.day}
+  syncTop();renderPanel();done()}
+function setDay(v){if(!(v>0))return;S.day=v;const tg=S.texts.find(x=>x.role==='tag');if(tg&&S.mode==='daily')tg.text=tagText();if(/^Day \d+$/.test(S.name)){S.name='Day '+v;$('#pname').value=S.name}lastTT='';renderTL()}
+const openTpl=()=>{sel=null;pmode='tpl';renderPanel();renderTL();showPanel()};
+$('#tplChip').onclick=openTpl;$('#tTpl').onclick=openTpl;
+$('#panel').addEventListener('input',e=>{if(e.target.id==='bulk'){const n=e.target.value.split('\n').filter(s=>s.trim()).length;const b=$('#bulkN');if(b)b.textContent=n+' dòng'}});
+['dragenter','dragover'].forEach(ev=>$('#panel').addEventListener(ev,e=>{const d=e.target.closest&&e.target.closest('#drop');if(!d)return;e.preventDefault();d.classList.add('over')}));
+$('#panel').addEventListener('dragleave',e=>{const d=e.target.closest&&e.target.closest('#drop');if(d&&!d.contains(e.relatedTarget))d.classList.remove('over')});
+$('#panel').addEventListener('drop',e=>{const d=e.target.closest&&e.target.closest('#drop');if(!d)return;e.preventDefault();d.classList.remove('over');const fs=[...(e.dataTransfer&&e.dataTransfer.files||[])];
+  const vis=fs.filter(f=>/^(video|image)\//.test(f.type)),aud=fs.filter(f=>/^audio\//.test(f.type));if(!vis.length&&!aud.length){toast('Chỉ nhận video, ảnh hoặc file nhạc');return}
+  (async()=>{if(vis.length)await addFiles(vis,false);if(aud.length)for(const f of aud)await addFiles([f],true)})()});
+$('#panel').addEventListener('input',e=>{if(e.target.id==='tplDay'){snap();setDay(parseInt(e.target.value))}});
+$('#panel').addEventListener('change',e=>{if(e.target.id==='tplDay')done()});
+$('#pname').addEventListener('focus',snap);$('#pname').addEventListener('input',e=>{S.name=e.target.value});$('#pname').addEventListener('change',done);
+$('#undo').onclick=undo;
+$('#play').onclick=()=>playing?pause():play();
+$('#split').onclick=()=>act('split');
+$('#safe').onclick=e=>{safe=!safe;e.currentTarget.classList.toggle('on',safe)};
+$('#tAdd').onclick=()=>$('#fClip').click();$('#tMus').onclick=()=>$('#fMus').click();
+$('#tText').onclick=()=>{act('addFree');showPanel()};$('#tCap').onclick=()=>{act('addCap');showPanel()};
+const clipTool=()=>{const h=clipAt(Math.min(t,clipTotal()-.01));if(!h){toast('Chưa có clip ở đầu phát');return}sel={k:'c',id:h.c.id};renderPanel();renderTL();showPanel()};
+const secTool=id=>()=>{clipTool();const el=document.getElementById(id);if(el)el.scrollIntoView({block:innerWidth<=900?'center':'nearest'})};
+$('#tSpeed').onclick=secTool('sec-speed');$('#tVol').onclick=secTool('sec-vol');$('#tFit').onclick=secTool('sec-fit');$('#tFx').onclick=secTool('sec-fx');$('#tTr').onclick=secTool('sec-tr');
+$('#tEff').onclick=()=>{sel=null;pmode='eff';renderPanel();renderTL();showPanel()};$('#tStk').onclick=()=>{sel=null;pmode='stk';renderPanel();renderTL();showPanel()};$('#tSfx').onclick=()=>{sel=null;pmode='sfx';renderPanel();renderTL();showPanel()};
+$('#tCover').onclick=cover;$('#tRec').onclick=()=>recV?stopRec():startRec();
+$('#tDup').onclick=()=>act('dup');$('#tDel').onclick=()=>act('del');
+let scrubbing=false;$('#scr').addEventListener('pointerdown',()=>{scrubbing=true;if(playing)pause()});
+$('#scr').addEventListener('input',e=>{if(playing)pause();seek(+e.target.value)});
+$('#scr').addEventListener('change',()=>{scrubbing=false});$('#scr').addEventListener('pointerup',()=>{scrubbing=false});
+function showPanel(){if(innerWidth<=900)$('#panel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}
+let lastTT='';function updBar(){const d=D(),s=$('#scr');const pT=document.getElementById('phT');if(pT)pT.textContent=fmt(t);s.max=d.toFixed(2);if(!scrubbing)s.value=t;$('#tcur').textContent=fmt(t);$('#ttot').textContent=fmt(d);
+  const key=d.toFixed(1)+'|'+S.clips.length+'|'+(sel?sel.k+sel.id:'')+'|'+!!clipAt(t)+'|'+S.mode;if(key===lastTT)return;lastTT=key;
+  $('#tlen').textContent=d.toFixed(1).replace('.',',')+' giây';$('#tclips').textContent=S.clips.length+' clip'+(S.music.length?' · '+S.music.length+' âm thanh':'');
+  const o=findSel(),hc=!!clipAt(t);$('#split').disabled=!hc;['tSpeed','tVol','tFit','tFx','tTr','tCover','tEff'].forEach(i=>$('#'+i).disabled=!S.clips.length);
+  $('#tDup').disabled=$('#tDel').disabled=!o||o.role==='tag';$('#tCap span').textContent=capName();$('#tplChip').textContent='Mẫu: '+TPLN[S.mode||'none']+(S.mode==='daily'?' · Day '+S.day:'')}
+$('#fClip').onchange=e=>{if(e.target.files.length)addFiles(e.target.files,false);e.target.value=''};
+function parseSrt(txt){const out=[];const re=/(\d+):(\d+):(\d+)[,.](\d+)\s*-->\s*(\d+):(\d+):(\d+)[,.](\d+)/;
+  txt.replace(/\r/g,'').split(/\n\s*\n/).forEach(b=>{const ls=b.split('\n');const i=ls.findIndex(l=>re.test(l));if(i<0)return;const m=ls[i].match(re);
+    const sec=(a,b,c,d)=>+a*3600+ +b*60+ +c+ +('0.'+d);const text=ls.slice(i+1).join('\n').replace(/<[^>]+>/g,'').trim();if(text)out.push({s:sec(m[1],m[2],m[3],m[4]),e:sec(m[5],m[6],m[7],m[8]),text})});return out}
+$('#fSrt').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const items=parseSrt(await f.text());if(!items.length){toast('File không có dòng phụ đề hợp lệ');return}
+  snap();items.forEach(x=>S.texts.push(mkText('cap',x.text,+x.s.toFixed(2),+Math.max(x.s+.2,x.e).toFixed(2))));toast('Đã nhập '+items.length+' dòng phụ đề');done()};
+$('#fMus').onchange=e=>{if(e.target.files.length)addFiles(e.target.files,true);e.target.value=''};
+document.addEventListener('keydown',e=>{const tag=document.activeElement&&document.activeElement.tagName;const typing=/INPUT|TEXTAREA|SELECT/.test(tag);
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!typing){e.preventDefault();undo();return}
+  if(typing||exporting)return;
+  if(e.code==='Space'){e.preventDefault();playing?pause():play()}
+  else if(e.key==='s'||e.key==='S')act('split');
+  else if((e.key==='Delete'||e.key==='Backspace')&&sel){const o=findSel();if(o&&o.role!=='tag')act('del')}});
+
+/* ---------- stickers & sound effects ---------- */
+const STK=['😂','🤣','😅','😭','🤯','😴','🥲','😎','🤔','👀','🙏','👏','💪','🔥','❤️','✨','💡','🎯','✅','❌','⚠️','⏰','☕','💻','📊','📈','📌','📝','🎉','🚀','💸','🏃','🍜','🌧️','🌙','👍'];
+const SFX={ting:{n:'Ting',d:.8},pop:{n:'Pop',d:.18},whoosh:{n:'Vút',d:.6},dingdong:{n:'Ding dong',d:1.1},click:{n:'Click',d:.06},boom:{n:'Bùm',d:.75},tada:{n:'Tèn ten',d:.85},buzz:{n:'Sai rồi',d:.6}};
+function wav(buf){const d=buf.getChannelData(0),n=d.length,b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,buf.sampleRate,true);v.setUint32(28,buf.sampleRate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++)v.setInt16(44+i*2,clamp(d[i],-1,1)*32767,true);return new Blob([b],{type:'audio/wav'})}
+async function synth(kind){const sr=44100,dur=SFX[kind].d+.05,O=window.OfflineAudioContext||window.webkitOfflineAudioContext;if(!O)return null;const o=new O(1,Math.ceil(sr*dur),sr);
+  const tone=(type,f0,f1,t0,d,vl)=>{const os=o.createOscillator(),gn=o.createGain();os.type=type;os.frequency.setValueAtTime(f0,t0);if(f1)os.frequency.exponentialRampToValueAtTime(f1,t0+d);gn.gain.setValueAtTime(.0001,t0);gn.gain.exponentialRampToValueAtTime(vl,t0+.006);gn.gain.exponentialRampToValueAtTime(.0001,t0+d);os.connect(gn);gn.connect(o.destination);os.start(t0);os.stop(t0+d+.02)};
+  const noise=(t0,d,vl,ft,f0,f1)=>{const len=Math.ceil(d*sr),nb=o.createBuffer(1,len,sr),dd=nb.getChannelData(0);for(let i=0;i<len;i++)dd[i]=Math.random()*2-1;const s=o.createBufferSource();s.buffer=nb;const fl=o.createBiquadFilter();fl.type=ft;fl.frequency.setValueAtTime(f0,t0);if(f1)fl.frequency.exponentialRampToValueAtTime(f1,t0+d);const gn=o.createGain();gn.gain.setValueAtTime(.0001,t0);gn.gain.linearRampToValueAtTime(vl,t0+d*.4);gn.gain.linearRampToValueAtTime(.0001,t0+d);s.connect(fl);fl.connect(gn);gn.connect(o.destination);s.start(t0)};
+  if(kind==='ting'){tone('sine',1760,0,0,.8,.5);tone('sine',2640,0,0,.5,.15)}
+  else if(kind==='pop')tone('sine',300,900,0,.14,.7);
+  else if(kind==='whoosh')noise(0,.6,.7,'bandpass',300,3000);
+  else if(kind==='dingdong'){tone('sine',988,0,0,.55,.45);tone('sine',784,0,.45,.6,.45)}
+  else if(kind==='click')noise(0,.035,.9,'highpass',2000,0);
+  else if(kind==='boom'){tone('sine',140,40,0,.7,.9);noise(0,.22,.35,'lowpass',900,120)}
+  else if(kind==='tada')[523,659,784,1047].forEach((f,i)=>tone('triangle',f,0,i*.1,i===3?.55:.16,.35));
+  else if(kind==='buzz'){tone('square',160,0,0,.22,.22);tone('square',140,0,.28,.3,.22)}
+  return wav(await o.startRendering())}
+async function addSfx(kind){const blob=await synth(kind);if(!blob){toast('Trình duyệt này không tạo được âm thanh');return}
+  const rec={id:'m'+uid(),name:SFX[kind].n,type:'audio/wav',blob,dur:SFX[kind].d};const m=await createMedia(rec);await idb('media','readwrite',st=>st.put(rec));
+  snap();S.music.push({id:uid(),mid:m.id,name:SFX[kind].n,kind:'sfx',s:+t.toFixed(2),e:+(t+SFX[kind].d).toFixed(2),off:0,vol:.8,fi:0,fo:0,duck:false,loop:false});
+  pmode='';sel={k:'m',id:S.music.at(-1).id};renderPanel();done();toast('Đã chèn '+SFX[kind].n)}
+let recChunks=[],recStream=null,recT0=0,recW0=0;
+async function startRec(){if(exporting)return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast('Trình duyệt này không thu âm được');return}
+  try{recStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}
+  catch(e){toast('Không mở được micro. Bản trên claude.ai bị chặn micro: dùng bản chạy trên máy (Claude Code) để thu giọng.');return}
+  const mm=['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(x=>MediaRecorder.isTypeSupported(x))||'';
+  try{recV=new MediaRecorder(recStream,mm?{mimeType:mm}:{})}catch(e){recStream.getTracks().forEach(k=>k.stop());toast('Không khởi tạo được bộ thu âm');return}
+  recChunks=[];recV.ondataavailable=e=>{if(e.data&&e.data.size)recChunks.push(e.data)};
+  recV.onstop=async()=>{const secs=(performance.now()-recW0)/1000,type=(recV&&recV.mimeType)||mm||'audio/webm';recV=null;$('#tRec').classList.remove('rec');$('#tRec span').textContent='Thu giọng';
+    if(master)master.gain.value=1;if(secs<.4||!recChunks.length){toast('Đoạn thu quá ngắn');return}
+    const n=S.music.filter(x=>x.kind==='voice').length+1,blob=new Blob(recChunks,{type}),rec={id:'m'+uid(),name:'Giọng thu '+n,type:type.startsWith('audio')?type:'audio/webm',blob,dur:secs,route:'bus'};
+    const m=await createMedia(rec);m.dur=secs;await idb('media','readwrite',st=>st.put(rec));
+    snap();S.music.push({id:uid(),mid:m.id,name:rec.name,kind:'voice',s:+recT0.toFixed(2),e:+(recT0+secs).toFixed(2),off:0,vol:1,fi:0,fo:0,duck:false,loop:false});
+    sel={k:'m',id:S.music.at(-1).id};renderPanel();done();toast('Đã thêm '+rec.name)};
+  ensureAudio();if(master)master.gain.value=0;recT0=t;recW0=performance.now();recV.start(250);play();
+  $('#tRec').classList.add('rec');$('#tRec span').textContent='Dừng thu';toast('Đang thu… video phát không tiếng để tránh vọng âm')}
+function stopRec(){if(!recV)return;const r=recV;if(r.state!=='inactive')r.stop();if(recStream)recStream.getTracks().forEach(k=>k.stop());recStream=null;if(playing)pause()}
+function cover(){if(!S.clips.length){toast('Chưa có clip');return}pause();clean=true;setQ(1);draw();
+  cv.toBlob(b=>{clean=false;setQ(previewQ());if(!b){toast('Không tạo được ảnh');return}outBlob=b;outName=dstr()+'_'+fileBase()+'_cover.png';
+    const i=$('#outi');i.src=URL.createObjectURL(b);i.hidden=false;$('#outv').hidden=true;$('#expH').textContent='Ảnh bìa';
+    $('#expN').textContent='Khung hình tại '+fmt(t)+', kèm chữ đang hiện. Muốn bìa có chữ riêng thì thêm tiêu đề ở thời điểm này rồi bấm Ảnh bìa lại.';
+    $('#expBar').parentElement.hidden=true;$('#dlBtn').hidden=false;$('#dlBtn').textContent='Tải ảnh bìa';$('#expClose').textContent='Đóng';$('#expM').classList.add('open')},'image/png')}
+const fileBase=()=>S.mode==='daily'?'daily-day'+S.day:S.mode==='weekend'?'cuoituan':((S.name||'video').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'').toLowerCase()||'video');
+const dstr=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+
+/* ---------- theme ---------- */
+const SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',MOON='<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+function paintTheme(){const l=document.documentElement.getAttribute('data-ui')==='light';$('#themeBtn').innerHTML=l?MOON:SUN;$('#themeBtn').title=l?'Chuyển sang giao diện tối':'Chuyển sang giao diện sáng'}
+$('#themeBtn').onclick=()=>{const n=document.documentElement.getAttribute('data-ui')==='light'?'dark':'light';document.documentElement.setAttribute('data-ui',n);try{localStorage.setItem('sdba-theme',n)}catch(e){}paintTheme()};
+paintTheme();
+
+/* ---------- projects ---------- */
+async function openProjects(){const all=(await idb('projects','readonly',st=>st.getAll()))||[];all.sort((a,b)=>b.updated-a.updated);
+  $('#plist').innerHTML=DB?(all.length?all.map(p=>`<div class="pr"><b>${esc(p.name||'Không tên')}</b><small>${new Date(p.updated).toLocaleString('vi-VN',{dateStyle:'short',timeStyle:'short'})}</small><button data-open="${p.id}">Mở</button><button data-delp="${p.id}" aria-label="Xóa">✕</button></div>`).join(''):'<p class="note">Chưa có dự án nào.</p>'):'<p class="note">Trình duyệt này không cho lưu nháp.</p>';
+  $('#projM').classList.add('open')}
+$('#projBtn').onclick=openProjects;$('#closeP').onclick=()=>$('#projM').classList.remove('open');
+$('#newP').onclick=()=>{pause();fresh();syncTop();renderPanel();refresh();save();$('#projM').classList.remove('open')};
+$('#plist').addEventListener('click',async e=>{const o=e.target.dataset.open,d=e.target.dataset.delp;
+  if(o){pause();await loadProject(o);$('#projM').classList.remove('open')}
+  if(d){if(e.target.dataset.sure!=='1'){e.target.dataset.sure='1';e.target.textContent='Xóa?';return}
+    await idb('projects','readwrite',st=>st.delete(d));const rest=(await idb('projects','readonly',st=>st.getAll()))||[];const used=new Set();rest.forEach(p=>{p.state.clips.forEach(c=>used.add(c.mid));p.state.music.forEach(m=>used.add(m.mid))});
+    if(d===pid){S.clips.forEach(c=>used.add(c.mid));S.music.forEach(m=>used.add(m.mid))}
+    const keys=(await idb('media','readonly',st=>st.getAllKeys()))||[];for(const k of keys)if(!used.has(k))await idb('media','readwrite',st=>st.delete(k));openProjects()}});
+
+/* ---------- export ---------- */
+let rec=null,chunks=[],outBlob=null,outExt='mp4',outName='',DL=null;
+if(window.claude&&window.claude.use)window.claude.use('downloads').then(d=>{DL=d}).catch(()=>{});
+function pickMime(){const c=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];return c.find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||''}
+$('#exp').onclick=async()=>{
+  if(!S.clips.length){toast('Chưa có clip nào để xuất');return}if(recV){toast('Đang thu giọng, dừng thu trước đã');return}
+  if(!window.MediaRecorder||!cv.captureStream){toast('Trình duyệt này chưa hỗ trợ xuất video. Thử Chrome hoặc Safari mới.');return}
+  ensureAudio();unlock();pause();const mime=pickMime();outExt=mime.includes('mp4')?'mp4':'webm';
+  const tracks=[...cv.captureStream(30).getVideoTracks()];if(recDest)tracks.push(...recDest.stream.getAudioTracks());
+  try{rec=new MediaRecorder(new MediaStream(tracks),mime?{mimeType:mime,videoBitsPerSecond:8e6}:{})}catch(e){toast('Không khởi tạo được bộ ghi video');return}
+  chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  rec.onstop=()=>{if(!rec._ok)return;outBlob=new Blob(chunks,{type:mime||'video/webm'});outName=dstr()+'_'+fileBase()+'.'+outExt;const v=$('#outv');v.src=URL.createObjectURL(outBlob);v.hidden=false;
+    $('#expH').textContent='Xuất xong';$('#expN').textContent=`File ${outExt.toUpperCase()}, ${(outBlob.size/1048576).toFixed(1)} MB. Xem lại rồi tải về.`+(outExt==='webm'?' Trình duyệt này chỉ ghi được WebM: TikTok bản web vẫn nhận, hoặc gửi file cho Claude chuyển sang MP4.':'');
+    $('#dlBtn').hidden=false;$('#expClose').textContent='Đóng'};
+  $('#expH').textContent='Đang xuất video…';$('#expN').textContent='Video được ghi theo thời gian thực ('+fmt(D())+'). Giữ nguyên tab này đến khi xong.';$('#expBar').style.width='0';$('#expBar').parentElement.hidden=false;$('#outv').hidden=true;$('#outi').hidden=true;$('#dlBtn').hidden=true;$('#dlBtn').textContent='Tải video về máy';$('#expClose').textContent='Hủy';$('#expM').classList.add('open');
+  setQ(1);exporting=true;t=0;syncMedia();await new Promise(r=>setTimeout(r,500));
+  rec._ok=true;rec.start(500);playing=true;lastNow=performance.now();
+};
+function finishExport(){playing=false;exporting=false;pause();setQ(previewQ());if(rec&&rec.state!=='inactive')rec.stop()}
+$('#expClose').onclick=()=>{if(exporting){rec._ok=false;finishExport();toast('Đã hủy xuất video')}$('#expM').classList.remove('open')};
+$('#dlBtn').onclick=async()=>{if(!outBlob)return;const name=outName;
+  if(!DL){const a=document.createElement('a');a.href=URL.createObjectURL(outBlob);a.download=name;document.body.appendChild(a);a.click();a.remove();toast('Đã tải: '+name);return}
+  try{const r=await DL.save({filename:name,data:outBlob});toast(r.status==='saved'?'Đã gửi file tới thư mục tải về':'Đã gửi file')}
+  catch(e){const c=e&&e.code;toast(c==='declined'?'Bạn đã từ chối tải':c==='rate_limited'?'Đang có một yêu cầu tải khác, thử lại sau giây lát':'Không tải được file ở đây')}};
+
+/* ---------- boot ---------- */
+(async()=>{
+  fresh();syncTop();renderPanel();$('#play').innerHTML=IPL;
+  pps=clamp(Math.floor($('#tls').clientWidth/10),40,240);$('#zoom').value=pps;refresh();
+  requestAnimationFrame(tick);
+  try{await document.fonts.load('900 80px Roboto','ĐẠ');await document.fonts.load('700 60px Roboto','ĐẠ')}catch(e){}
+  DB=await openDB();let last=null;try{last=localStorage.getItem('sdba-last')}catch(e){}
+  let crashed=false;try{crashed=localStorage.getItem('sdba-loading')===last&&!!last}catch(e){}
+  if(DB&&last&&crashed){toast('Lần trước mở dự án bị lỗi nên mình chưa tự mở lại. Bấm “Dự án” để chọn.');try{localStorage.removeItem('sdba-loading')}catch(e){}}
+  else if(DB&&last){const p=await idb('projects','readonly',st=>st.get(last));if(p){try{localStorage.setItem('sdba-loading',last)}catch(e){}
+    try{await loadProject(last)}catch(e){toast('Không mở được dự án gần nhất. Bấm “Dự án” để chọn lại.');pause();fresh();syncTop();renderPanel();refresh()}
+    try{localStorage.removeItem('sdba-loading')}catch(e){}}}
+  setQ(previewQ());let rzT;window.addEventListener('resize',()=>{renderTL();clearTimeout(rzT);rzT=setTimeout(()=>{if(!exporting)setQ(previewQ())},200)});
+})();
+}
+</script>
+</body>
+</html>
